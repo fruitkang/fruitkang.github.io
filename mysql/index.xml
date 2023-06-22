@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysqls on 果汁康</title>
+    <link>https://fruitkang.github.io/mysql/</link>
+    <description>Recent content in Mysqls on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MySQL中select * 的坏处</title>
+      <link>https://fruitkang.github.io/mysql/mysql%E4%B8%ADselect-_-%E7%9A%84%E5%9D%8F%E5%A4%84/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/mysql%E4%B8%ADselect-_-%E7%9A%84%E5%9D%8F%E5%A4%84/</guid>
+      <description> 多余的字段会造成解析开销和网络带宽开销，所以一般我们只按需查找数据。 可能用不到覆盖索引，用到也需要回表查询，导致查询速率降低。  </description>
+    </item>
+    
+    <item>
+      <title>MySQL体系结构与存储引擎</title>
+      <link>https://fruitkang.github.io/mysql/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E4%B8%8E%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E4%B8%8E%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</guid>
+      <description> 1、通过执行以下命令可知mysql配置文件位置 mysql --help | grep my.cnf  如果存在多个配置文件有同一个参数，以最后一个配置文件为准。
+2、mysql体系结构 1、数据库连接池：用于管理客户端的连接 2、SQL接口组件：提供了客户端SQL语句的规范，例如DML、DDL操作SQL。 3、SQL查询分析器：根据SQL规范解析sql。 4、SQL优化器：对SQL进行优化，使得sql的执行效率更高。 5、缓存组件：对sql语句和查询结果进行缓存，当sql语句一样的时候，就不用进行sql解析和优化了。 6、插件式存储引擎：规定数据存储时的结构，二这种结构也将会影响数据的存储和查询性能。 7、操作系统，物理文件：文件系统，存储了mysql运行中产生的日志，已经MySQL中存储的数据、结构。
+3、MySQL存储引擎 3.1、InnoDB存储引擎  支持事务 支持行锁、表锁、页锁 使用多版本控制（MVCC）获得高并发 支持外键 实现数据的4种隔离级别，默认为可重复读（repeatable） 插入缓存区 二次写 自适应哈希索引 预读 inndb1.2之后开始支持全文索引
+3.2、MyISAM存储引擎 不支持事务
+ 表锁
+ 支持全文索引
+ 缓存池只缓存索引文件，不缓存数据。数据文件的缓存交由操作系统本身来完成。
+3.2、Memory存储引擎 数据放在内存中
+ 只支持表锁
+ 不支持TEXT和BLOB类型
+4、连接MySQL 1、TCP\IP连接 2、共享内存 3、命名通道 4、UNIX域套接字
+  </description>
+    </item>
+    
+    <item>
+      <title>MySQL常见问题解决</title>
+      <link>https://fruitkang.github.io/mysql/mysql%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/mysql%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</guid>
+      <description>1、mysql跳过域名解析（可解决mysql连接慢的问题） 在配置文件中加入如下，并重启 mysql
+[mysqld] skip-name-resolve  解释：
+skip-name-resolve：跳过域名解析
+2、常用配置 [client] default-character-set=utf8 [mysql] default-character-set=utf8 [mysqld] init_connect=&#39;SET collation_connection = utf8_unicode_ci&#39; init_connect=&#39;SET NAMES utf8&#39; character-set-server=utf8 collation-server=utf8_unicode_ci skip-character-set-client-handshake skip-name-resolve  3、mysql开启root用户远程访问 #执行sql语句（两条） grant all privileges on *.* to &#39;root&#39;@&#39;%&#39; identified by &#39;root&#39; with grant option; flush privileges;  4、Mysql的通信方式 4.1、TCP/IP网络通信 通过-h指定mysql服务的ip地址，通过-P指定mysql服务监听的端口
+win和linux都可以
+例如：
+#服务端启动 mysqld -P3307 --user=root #客户端启动 mysql -P3307 -uroot -p  4.2、命名管道通信 通过参数使mysql服务器和客户端同时使用命名管道通信。
+只适用于win系统
+#服务端启动 mysqld --enable-named-pipe #客户端启动 mysql --pipe -uroot -p  4.</description>
+    </item>
+    
+    <item>
+      <title>MySQL文件</title>
+      <link>https://fruitkang.github.io/mysql/%E6%96%87%E4%BB%B6/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/%E6%96%87%E4%BB%B6/</guid>
+      <description>1、简介    文件 作用     参数文件 告诉mysql启动时去哪里找数据库文件，并指定某些初始化参数   日志文件 记录mysql实例对某种条件做出响应时写入的文件   socket文件 当用unix域套接字方式进行连接时需要的文件   pid文件 mysql实例进程的ID文件   mysql表结构文件 用来存放mysql表结构定义文件   存储引擎文件 存储记录和索引的数据    2、参数为文件 参数文件位置：通过运行mysql --help | grep my.cnf命令即可。 参数类型：
+ 动态参数：可以在mysql实例运行中进行修改 静态参数：在整个实例生命周期内都不能修改  还可以按照其他角度分类：
+ 全局 session
+3、日志文件 日志文件用来记录影响Mysql数据库的各类型活动。常见日志有：
+   错误日志（error log） 二进制日志（binlog） 慢查询日志（slow query log） 查询日志（log）
+3.1、错误日志 通过show variables like &#39;log_error&#39;;错误日志文件位置。
+   3.</description>
+    </item>
+    
+    <item>
+      <title>MySQL索引与算法</title>
+      <link>https://fruitkang.github.io/mysql/%E7%B4%A2%E5%BC%95%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/%E7%B4%A2%E5%BC%95%E4%B8%8E%E7%AE%97%E6%B3%95/</guid>
+      <description> 1、Innodb存储引擎常见索引概述 常见索引：
+ B+树索引 全文索引 哈希索引  Innodb存储引擎支持的哈希索引是自适应的，Innodb存储引擎会根据表的使用情况自动生成哈希索引，不能人为的干预是否在一张表中生产哈希索引。
+2、数据结构与索引 2.1、二分查找法 每页Page Directctory中的槽是按照主键的顺序存放的，对于某一条具体的记录的查询是通过对Page Directory进行二分查找得到的。
+2.2、二叉查找树和平衡二叉树 2.2.1、二叉查找树 在二叉树中左子树的键值总是小于根的键值，右子树的键值总是大于根的键值，因此通过中序遍历得到的排序输出。 二叉树的缺点： 2.2.2、平衡二叉树 平衡二叉树必须先符合二叉树的定义，其次必须满足任何节点的两个子树的高度最大差为1。 由二叉树变为平衡二叉树通常需要一次或多次的左旋和右旋来得到插入或更新后树的平衡性。 二叉树的缺点：由于一棵平衡二叉树插入一个新的节点，平衡二叉树需要旋转操作，因此对一棵平衡二叉树的维护有一定的开销。不过平衡二叉树多用于内存结构，因此维护成本开销相对较小。
+2.3、B+树 简单定义：B+树为磁盘或其他直接存取辅助设计的一种平衡查找树。
+2.3.1、B+树的插入操作 B+树无论如何总是会保持平衡。但是为了保持平衡对于新插入的键值可能需要大量拆分也操作。因为B+树结构主要用于磁盘，页的拆分意味着磁盘的操作，所以应该在可能的情况下减少页的拆分。因此，B+树同样提供了类似的平衡二叉树的旋转功能。通过旋转能够减少页的拆分操作。
+2.3.2、B+树的删除操作 B+树使用填充因子来控制树的删除变化。
+2.4、B+树索引 B+树索引在数据库中的一个特点为高扇出性，因此B+树的高度一般都在2~4层。
+2.4.1、聚集索引 根据主键构造一棵B+树。 数据页叶子节点存放的即为表的行记录数据。 非数据的索引页中存放的仅仅是键值已经指向数据页的偏移量。
+2.4.2、非聚集索引（辅助索引） 叶子节点除了保存辅助索引值外还保存了主键，
+2.4.3、B+树索引的分裂 2.4.4、B+树索引的管理 </description>
+    </item>
+    
+    <item>
+      <title>MySQL自增主键用完之后怎么办？</title>
+      <link>https://fruitkang.github.io/mysql/mysql%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE%E7%94%A8%E5%AE%8C%E4%B9%8B%E5%90%8E%E6%80%8E%E4%B9%88%E5%8A%9E/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/mysql%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE%E7%94%A8%E5%AE%8C%E4%B9%8B%E5%90%8E%E6%80%8E%E4%B9%88%E5%8A%9E/</guid>
+      <description> 1、简介  Mysql自增主键分为两种，一种为我们主动设置的自增主键。另一种为我们没有设置主键，mysql自动会给我设置一个6个字节的row_id字段为默认自增主键列。
+ 2、设置自增主键  这种情况下，当mysql的自增主键用完之后将会报主键冲突异常。例如我们有一个无符号的tinyint类型的id主键，他的最大值为255，当主键的值超过255的时候，主键的值就又从0开始了，这时候忧郁主键为0的记录已存在，则会发生主键冲突异常。
+ 3、不设置默认主键  这时候mysql会为我们添加一个6个字节的row_id字段为默认主键，当这个主键的最大值大于2的48次方之后，也会从0开始，这时候不会报异常，而是会将之前为0主键的记录覆盖掉，覆盖数据是一个重要的问题。
+ </description>
+    </item>
+    
+    <item>
+      <title>MySQL表</title>
+      <link>https://fruitkang.github.io/mysql/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</guid>
+      <description>1、简介 第一个支持ACID事务的存储引擎，行锁设计、支持MVCC、支持外键、提供一致性非锁定读，同时被设计用来最有效的利用内存和CPU。
+2、InnoDB存储引擎体系结构 后台线程的作用： ①：刷新内存池中的数据，保存缓存池中内存缓存的时最近的数据。 ②：将已修改的数据文件刷新到磁盘文件 ③：保证数据发生异常异常的情况下能恢复到正常运行状态
+2.1、后台线程 InnoDB属于多线程模型。
+   线程 作用     Master Thread 将缓存池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓冲、undo页的回收。   IO Thread 负责IO请求的回调   Purge Thread 事务提交之后，其所有使用的undo log可能不在需要，因此需要Purge Thread来回收已经使用并分配的undo页。   Page Cleaner Thread 为了减轻Master Thread的工作对于用户查询线程的阻塞，进一步提高InnoDB存储引擎的性能，InnoDB1.2x版本加入该线程，其作用是接手之前由Master Thread的刷新脏页的工作，减少Master的工作量。    2.2、内存 1、缓存池 InnoDB存储引擎是基于磁盘存储的，并将其中的记录按照页的方式进行管理。 缓存池是为了解决CPU与磁盘速度之间的鸿沟。 缓存池的大小直接影响能够缓存mysql数据的多少，也就直接影响了MySQL的性能. InnoDB缓存池实例 可以通过参数innodb_buffer_pool_instance参数配置多个缓存池实例，每一个页将会根据哈希值平均分配到不同的缓冲池实例中。
+2、缓存池管理 2.1、LRU列表 缓存池一般都是通过LRU（最近最少使用算法）进行管理的。缓冲池中默认页的大小为16K。 InnoDB对传统的LRU算法做了一些优化，在LRU列表中加入了midpoint位置。读取到新的页，并不是直接放入到LRU的首部，而是放入到LRU列表的midpoint位置（中心点插入策略）。 新加入的页何时才能从mid位置加入到new列表（热端），innodb使用innodb_old_blocks_time参数管理，当新读取的页在mid位置等待innodb_old_blocks_time指定的时间之后，将被放入到LRU列表的热端。 2.2、Free列表 LRU列表用来管理已经读取的页，当数据库启动的时候，LRU列表是空的，此时所有的页都存储在Free列表中。 2.3、unzip_LRU列表 innodb从1.0.x开始支持压缩的页的功能，unzip_LRU就是用来管理压缩页的。LRU列表是包含unzip_LRU。 标准页大小为16K，压缩的大小根据压缩比率不同，可分为2k、4k、8k。 unzip_LRU对不同压缩页大小的管理。以需要从缓冲池中分配4kb的页为例。 2.4、Flush列表 在LRU列表中的页被修改之后就变为了脏页，这是将会通过checkPoint机制，将脏页刷新回磁盘中。Flush列表，就是用于存储脏页的，也被称为脏页列表。脏页即存在于Flush列表中也存在与LRU列表中。LRU列表用来管理缓冲池中页的可用性，Flush列表用来管理将页刷新回磁盘。
+3、重做日志缓冲 InnoDB存储将重做日志信息先放到这个缓冲区，然后按一定的频率将其刷新到重做日志文件。 重做日志缓冲区内容刷新到磁盘时机： ①：MasterThread每一秒将重做日志缓冲刷新到重做日志文件 ②：每个事务提交时会将重做日志缓冲刷新到重做日志文件。 ③：当重做日志缓冲池剩余空间小于1/2时，重做缓冲刷新到重做日志文件。</description>
+    </item>
+    
+    <item>
+      <title>MySQL表</title>
+      <link>https://fruitkang.github.io/mysql/%E8%A1%A8/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/%E8%A1%A8/</guid>
+      <description> 1、简介 介绍表中数据是如何组织和存放的。
+2、索引组织表 在innodb存储引擎中，表都是根据主键顺序组织存放的，这种存储方式的表称为“索引组织表”。 主键的创建方式：
+ 创建表示若指定主键，则使用该主键 若没有指定主键，则判断表中是否存在唯一索引，若存在，则使用唯一所以作为主键 若存在多个唯一索引，则使用定义的第一个作为主键。 若没有唯一索引，innodb存储引擎将会自动创建一个6字节的id主键。
+3、Innodb逻辑存储结构 3.1、表空间 innodb存储引擎默认情况只有一个共享表空间idbdata1，即所有数据都放在这个表空间内。如果启用“innodb_file_per_table”参数，则每张表内的数据单独放一个表空间内。需要注意的是每张表的表空间只存放数据。其他的索引、插入缓冲Bitmap页、undo信息、插入缓存索引页、系统事务、二次写缓冲等还是放在原来共享的表空间内。
+3.2、段 表空间是由各个段组成的，常见的段有数据段、索引段、回滚段等。数据段就是B+数据的叶子节点、索引段就是B+树的非叶子节点。
+3.3、区 区由连续的页组成，任何情况下每个区的大小都为1MB，为了保证区中页的连续性，Innodb存储引擎一次从磁盘申请4~5个区。默认情况下，一个页大小为16K，即一个区中由64个连续的页。
+3.4、页 页是innodb磁盘管理的最小单位。 常见页类型：
+ 数据页
+ undo页
+ 系统页
+ 事务数据页
+ 插入缓冲位图页
+ 插入缓冲空闲列表页
+ 未压缩的二进制大对象页
+ 压缩的二进制大对象页
+3.5、行 Innodb存储引擎是面向列的，也就是按照行进行数据存放的。
+3.6、行格式 innodb由两种行格式，一种为旧版的行格式（redundant），一种为新版的行格式（Compact）
+  3.6.1、Compact行格式 </description>
+    </item>
+    
+    <item>
+      <title>MySQL锁</title>
+      <link>https://fruitkang.github.io/mysql/%E9%94%81/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/%E9%94%81/</guid>
+      <description>MyISAM，表锁设计，读没有问题，但是写的性能相对较差。 Innodb两种行级锁
+ 共享锁 排他锁  innodb存储引擎支持额外的锁方式，称之为意向锁。意向锁的将锁定的对象分为多个层次，意向锁意味着事务希望在更细粒度上加锁操。</description>
+    </item>
+    
+    <item>
+      <title>Mysql中int(1)和int(10)的区别?</title>
+      <link>https://fruitkang.github.io/mysql/mysql%E4%B8%ADint1%E5%92%8Cint10%E7%9A%84%E5%8C%BA%E5%88%AB/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/mysql%E4%B8%ADint1%E5%92%8Cint10%E7%9A%84%E5%8C%BA%E5%88%AB/</guid>
+      <description> 1、简介  在编程开发中我们经常使用到int(10)，我们经常误以为后面括号里面的数组会影响这个字段能存储的最大值。然而这是错误的。
+ 不论int(10)还是int(1)在mysql底层都是使用一个int类型4个字节存储的，所以其存储的最大值是一样的。都可以存储无符号整型2的32次方减1。  int(1)和int(10)这里的数字其实是配合zeroFill这个关键词使用的表示的是数据的才能使宽度。
+在创建表的时候指定id字段使用zeroFill零填充规则，并且id字段使用int(5)类型，也就是id字段的显示宽度必须为5个字符，当不够五个字符的时候就使用zeroFill进行零填充。
+ Tap  不管int(0)还是int(10）使用4个字节进行存储的，所以能够存储的最大数据类型一样。
+ 虽然数据显示为00001，但是底层存储的依然是1，只是显示的时候填充了零，所以int(1)括号中的数字表示的是显示宽度。
+  </description>
+    </item>
+    
+    <item>
+      <title>Mysql小知识</title>
+      <link>https://fruitkang.github.io/mysql/mysql%E5%B0%8F%E7%9F%A5%E8%AF%86/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/mysql/mysql%E5%B0%8F%E7%9F%A5%E8%AF%86/</guid>
+      <description> 1、复杂的sql要进行explain 主要是查看sql执行的计划的type属性。
+2、varchar和char的区别 varchar是变长的，char是定长的，这里指的是字符串数。char类型的数据在长度不够是会使用空格补充，会浪费空间，但因为长度固定，所以char的存储速度比varchar快，char最多能放255个字符和编码方式无关。varchar是变长的，如果长度小于定义的长度，会按照实际长度存储，相比char更节省空间。但是因为是变长的，所以存取的速度 比char要慢。varchar在存储方面，若列的长度小于等于255字节，那需要额外一个字节来记录真实数据长度，若长度大于255，则需要两个字节记录真实数据的长度。
+3、mysql中datetime和timestamp的类型的区别  datetime占用8个字节，timestamp占用4个字节
+ datetime最大可以表示到9999年，timestamp最大可以表示到2038年
+  4、聚集索引与非聚集索引  聚集索引就是索引与表数据存储在一起，聚集索引的叶子节点存储的是整行数据，聚集所以一张表只有一个。
+ 非聚集索引就是索引与表数据不存储在一起，非聚集索引的叶子节点存储的是列值和主键。一张表可以有多个。
+  5、线上CPU暴涨如何排查  通过top命令确认cpu的占用情况
+ 通过show processlist来查看mysql的线程运行情况
+ 通过 show open tables where in_use &amp;gt; 0 查看表锁情况。
+ 通过mysql的error_log查看是否有错误
+ 通过 SHOW ENGINE INNODB STATUS 查看是否有死锁
+ 通过慢查询日志，检查是否有慢查询。
+ 通过iostat来查看磁盘IO情况
+  iostat命令安装 yum install sysstat
+6、尽量使用not null  null值在mysql中占用时间，而空值不占用空间
+ 对于字段运行为null的时候，判断条件为is null 或者is not null
+ count（字段）不统计null值得列
+ null值比任何值都小，从小到大排序时，null值排在最前面
+  </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Framework on 果汁康</title>
+    <link>https://fruitkang.github.io/tags/framework/</link>
+    <description>Recent content in Framework on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tags/framework/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Mybatis sqlSession 级别缓存导致引发的现象</title>
+      <link>https://fruitkang.github.io/framework/mybatis-sqlsession-%E7%BA%A7%E5%88%AB%E7%BC%93%E5%AD%98%E5%AF%BC%E8%87%B4%E5%BC%95%E5%8F%91%E7%9A%84%E7%8E%B0%E8%B1%A1/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/framework/mybatis-sqlsession-%E7%BA%A7%E5%88%AB%E7%BC%93%E5%AD%98%E5%AF%BC%E8%87%B4%E5%BC%95%E5%8F%91%E7%9A%84%E7%8E%B0%E8%B1%A1/</guid>
+      <description>1、背景 ​ 项目最近遇到了了一个奇怪的现象，数据库的数据和前端页面上的数据展示的不一样，只因为方法上面加一个@Transactional注解，这瞬间让我的脑袋上挂了一个大大的问号。
+2、代码逻辑  数据库初始数据  数据库就这一条数据，之后所有的逻辑都是在操作这条数据
+ “欣赏”一下大致的代码逻辑👀  @RestController @RequestMapping(&amp;quot;/v1/data&amp;quot;) public class DataController { /** * 官方推荐使用构造器注入，我偷个懒 */ @Resource private StudentMapper studentMapper; @GetMapping(&amp;quot;/deal&amp;quot;) public String dealData(@RequestParam(&amp;quot;id&amp;quot;) String id) { Student student = studentMapper.selectById(id); student.setName(&amp;quot;名字被修改了&amp;quot;); //一大堆业务逻辑，但是没有操作过student表 Student student2 = studentMapper.selectById(id); return student2.toString(); } @GetMapping(&amp;quot;/deal/tran&amp;quot;) @Transactional public String dealDataOnTransactional(@RequestParam(&amp;quot;id&amp;quot;) String id) { Student student = studentMapper.selectById(id); student.setName(&amp;quot;名字被修改了&amp;quot;); //一大堆业务逻辑，但是没有操作过student表 Student student2 = studentMapper.selectById(id); return student2.toString(); } }  不要问我为啥会出现这样的无理取闹的逻辑，这是公司的商业秘密，无可奉告😎。（商业秘密就是指不能让别的公司知道，因为太丢脸了🤢）</description>
+    </item>
+    
+    <item>
+      <title>Spring Security学习笔记</title>
+      <link>https://fruitkang.github.io/framework/spring-security%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/framework/spring-security%E7%AC%94%E8%AE%B0/</guid>
+      <description>一、简介  Spring Security提供了一整套完整的web安全性的完整解决方案。Spring Security两大核心，认证，授权。
+ 1.1、认证  验证用户为系统的合法主体，通俗：用户能够登录这个系统
+ 1.2、授权  用户是否有权限做某些事情。
+ 1.3、Spring Security 与 Shiro的特点  Spring Security 特点   1、和Spring无缝整合
+2、全面权限控制
+3、专门为web开发而设计
+ 旧版本不能脱离web环境 新版本可以脱离web环境  4、重量级
+  Shiro特点   1、轻量级
+2、通用性
+ 好处：不局限于web环境
+ 坏处：web环境下特点的需求需要手动编码
+   1.4、安全管理技术栈推荐  1、SSM + Shiro
+2、Spring Boot / Spring Cloud + Spring Security
+ 二、Spring Security基本原理 2.1、基本介绍  Spring Security本质是一个过滤器链，有多个过滤器组成，是基于JavaWeb中的过滤器Filter执行的，Filter执行doFilter方法，当过滤器执行放行操作之后才能到下一个过滤器执行。
+通过源码可知有众多过滤器，这里介绍3个。
+ FilterSecurityInterceptor  方法层级的权限过滤器，基本位于过滤器的最底层。</description>
+    </item>
+    
+    <item>
+      <title>Spring Spel表达式</title>
+      <link>https://fruitkang.github.io/framework/spring-spel%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/framework/spring-spel%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
+      <description>1、spel表达式简介 Spring表达式语言(简称“SpEL”)是一种功能强大的表达式语言，支持在运行时查询和操作对象图。 语言语法类似于Unified EL，但提供了额外的功能，最显著的是方法调用和基本的字符串模板功能。
+2、测试环境搭建 1、环境 java8 + maven
+2、搭建 1、maven导入spel表达式所有的jar包
+&amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-expression&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;5.2.12.RELEASE&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-context&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;5.2.12.RELEASE&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;  3、Spel表达式解析 1、单引号表示字符串字面值 /** * 使用单引号表示字符串字面值 */ private static void stringConstTest() { /*负责解析表达式的接口*/ ExpressionParser parser = new SpelExpressionParser(); /*使用单引号表示字符串字面值*/ String expression = &amp;quot;&#39;Hello World&#39;&amp;quot;; Expression exp = parser.parseExpression(expression); String message = (String) exp.getValue(); /*结果为：Hello World */ System.out.println(message); }  String expression = &amp;ldquo;&amp;lsquo;Hello World&amp;rsquo;&amp;rdquo;; 为Spel表达式，其中使用单引号表示字符串字面值。
+2、使用spel调用方法 /** * spel调用方法 */ private static void callMethodTest() { /*负责解析表达式的接口*/ ExpressionParser parser = new SpelExpressionParser(); /*调用字符串的concat方法*/ Expression exp = parser.</description>
+    </item>
+    
+    <item>
+      <title>mybatis常用配置</title>
+      <link>https://fruitkang.github.io/framework/mybatis%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/framework/mybatis%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE/</guid>
+      <description> 1、mybatis日志输出配置 configuration: log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  </description>
+    </item>
+    
+    <item>
+      <title>springboot集成mybatis-plus</title>
+      <link>https://fruitkang.github.io/framework/springboot%E9%9B%86%E6%88%90mybatis-plus/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/framework/springboot%E9%9B%86%E6%88%90mybatis-plus/</guid>
+      <description>1、导入依赖
+&amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.baomidou&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mybatis-plus-boot-starter&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.2.0&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;  2、配置
+2.1 配置数据源：
+①导入数据驱动
+&amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;mysql&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mysql-connector-java&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;8.0.17&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;  spring: datasource: username: root password: root url: jdbc:mysql://192.168.1.12:3306/gulimall_pms driver-class-name: com.mysql.jdbc.Driver  2.2配置mybatis-plus
+①mapperScan设置mapper接口
+@MapperScan(&amp;quot;com.atguigu.gulimall.product.dao&amp;quot;) @SpringBootApplication public class GulimallProductApplication { public static void main(String[] args) { SpringApplication.run(GulimallProductApplication.class, args); } }  ②设置mapper文件的位置
+mybatis-plus: mapper-locations: classpath:/mapper/**/*.xml  ③设置主键自增
+mybatis-plus: mapper-locations: classpath:/mapper/**/*.xml global-config: db-config: id-type: auto  </description>
+    </item>
+    
+  </channel>
+</rss>

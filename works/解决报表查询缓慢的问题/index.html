@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>解决报表查询缓慢的问题 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="解决报表查询缓慢的问题"/>
+<meta name="twitter:description" content="一、问题介绍  项目中报表的查询接口的性能较慢，虽然目前运营那边可以接受但是考虑到后续项目的发展，当前必须进行优化。
+ 二、问题查找 2.1、SQL问题  当前报表查询的接口的部分sql的书写并不规范，导致sql并未命中索引。例如前端要求查询【2022年10月~2022年12月】的数据，部分sql书写未select xxxx from table where date_fromat(date) between 2022-10 and 2022-12，这种在索引字段上加函数的操作导致索引失效，这只是其中一种情况，还有其他情况，例如未使用覆盖索引、使用了临时表、分组之后进行了多余的排序、不满足最左匹配、甚至没有建立索引的情况。
+ 2.2、数据量问题   当前报表查询的接口主要是直接查询订单表数据。 订单表为业务的核心数据表，随着日后的发展订单表的数据量也将逐渐增大，报表查询性能也将下降。    三、问题解决 3.1、优化sql  按照规范书写SQL，把在索引字段上使用函数的情况放到Java程序中去处理参数为合适的数据格式。
+根据需求建立索引，并尽量使用覆盖索引或索引下推以减少回表次数。
+SQL需要满足最左匹配。
+分组之后如果无需排序可以使用group by xxxx order by null减少不必要的排序
+等等其他一些方式
+ 3.2、解决数据量较大问题 3.2.1、数据抽取方案（采用）  简介   我们的系统是Saas系统，系统中有商户、运营商等业务角色。
+将订单表根据这些业务角色分别抽取出所需要的年运营商数据表、月运营商数据表、日运营商数据表等各种抽取表，后续运营商按照年查询数据的之后直接到对应的表里面直接查询，无需查询订单表等核心表。
+  实现方案   在订单入库的时候发一个订单的mq消息，数据抽取服务收到这个消息之后同步去修改对饮运营商的日、月、年的抽取表。
+加一个定时任务，每天晚上去全量抽取前一天的数据，去兜底mq消息消费失败的情况。
+写一个接口，在上线之后抽取之前没有抽取的数据。
+  方案优势    查询数据量极具变小，例如一个运营商一天有一万条数据，但抽取之后这一万条数据就变成了一条数据，极大的减少了数据查询两。 减少查询核心订单表的次数，缓解了订单表的压力。 实现方案较为简单，只需引入mq消息去同步修改抽取表的数据即可。    方案劣势    订单表数据量大的问题没有解决，对于一些必须查询订单表的情况可能不大友好。 引入mq这种消息就面临着这种数据的不一致问题（运营允许当天数据可以不准确，所以对我们影响不大）   3."/>
+
+    <meta property="og:title" content="解决报表查询缓慢的问题" />
+<meta property="og:description" content="一、问题介绍  项目中报表的查询接口的性能较慢，虽然目前运营那边可以接受但是考虑到后续项目的发展，当前必须进行优化。
+ 二、问题查找 2.1、SQL问题  当前报表查询的接口的部分sql的书写并不规范，导致sql并未命中索引。例如前端要求查询【2022年10月~2022年12月】的数据，部分sql书写未select xxxx from table where date_fromat(date) between 2022-10 and 2022-12，这种在索引字段上加函数的操作导致索引失效，这只是其中一种情况，还有其他情况，例如未使用覆盖索引、使用了临时表、分组之后进行了多余的排序、不满足最左匹配、甚至没有建立索引的情况。
+ 2.2、数据量问题   当前报表查询的接口主要是直接查询订单表数据。 订单表为业务的核心数据表，随着日后的发展订单表的数据量也将逐渐增大，报表查询性能也将下降。    三、问题解决 3.1、优化sql  按照规范书写SQL，把在索引字段上使用函数的情况放到Java程序中去处理参数为合适的数据格式。
+根据需求建立索引，并尽量使用覆盖索引或索引下推以减少回表次数。
+SQL需要满足最左匹配。
+分组之后如果无需排序可以使用group by xxxx order by null减少不必要的排序
+等等其他一些方式
+ 3.2、解决数据量较大问题 3.2.1、数据抽取方案（采用）  简介   我们的系统是Saas系统，系统中有商户、运营商等业务角色。
+将订单表根据这些业务角色分别抽取出所需要的年运营商数据表、月运营商数据表、日运营商数据表等各种抽取表，后续运营商按照年查询数据的之后直接到对应的表里面直接查询，无需查询订单表等核心表。
+  实现方案   在订单入库的时候发一个订单的mq消息，数据抽取服务收到这个消息之后同步去修改对饮运营商的日、月、年的抽取表。
+加一个定时任务，每天晚上去全量抽取前一天的数据，去兜底mq消息消费失败的情况。
+写一个接口，在上线之后抽取之前没有抽取的数据。
+  方案优势    查询数据量极具变小，例如一个运营商一天有一万条数据，但抽取之后这一万条数据就变成了一条数据，极大的减少了数据查询两。 减少查询核心订单表的次数，缓解了订单表的压力。 实现方案较为简单，只需引入mq消息去同步修改抽取表的数据即可。    方案劣势    订单表数据量大的问题没有解决，对于一些必须查询订单表的情况可能不大友好。 引入mq这种消息就面临着这种数据的不一致问题（运营允许当天数据可以不准确，所以对我们影响不大）   3." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/works/%E8%A7%A3%E5%86%B3%E6%8A%A5%E8%A1%A8%E6%9F%A5%E8%AF%A2%E7%BC%93%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/" />
+<meta property="article:published_time" content="2022-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2022-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">解决报表查询缓慢的问题</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/works/">Works</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="一-问题介绍">一、问题介绍</h1>
+
+<blockquote>
+<p>项目中报表的查询接口的性能较慢，虽然目前运营那边可以接受但是考虑到后续项目的发展，当前必须进行优化。</p>
+</blockquote>
+
+<h1 id="二-问题查找">二、问题查找</h1>
+
+<h2 id="2-1-sql问题">2.1、SQL问题</h2>
+
+<blockquote>
+<p>当前报表查询的接口的部分sql的书写并不规范，导致sql并未命中索引。例如前端要求查询【<code>2022年10月~2022年12月</code>】的数据，部分sql书写未<code>select xxxx from table where date_fromat(date) between 2022-10 and 2022-12</code>，这种在索引字段上加函数的操作导致索引失效，这只是其中一种情况，还有其他情况，例如未使用<code>覆盖索引、使用了临时表、分组之后进行了多余的排序、不满足最左匹配、甚至没有建立索引的情况</code>。</p>
+</blockquote>
+
+<h2 id="2-2-数据量问题">2.2、数据量问题</h2>
+
+<blockquote>
+<ul>
+<li>当前报表查询的接口主要是直接查询订单表数据。</li>
+<li>订单表为业务的核心数据表，随着日后的发展订单表的数据量也将逐渐增大，报表查询性能也将下降。</li>
+<li></li>
+</ul>
+</blockquote>
+
+<h1 id="三-问题解决">三、问题解决</h1>
+
+<h2 id="3-1-优化sql">3.1、优化sql</h2>
+
+<blockquote>
+<p>按照规范书写SQL，把在索引字段上使用函数的情况放到Java程序中去处理参数为合适的数据格式。</p>
+
+<p>根据需求建立索引，并尽量<code>使用覆盖索引或索引下推以减少回表次数</code>。</p>
+
+<p>SQL需要满足最左匹配。</p>
+
+<p>分组之后如果无需排序可以使用<code>group by xxxx order by null</code>减少不必要的排序</p>
+
+<p>等等其他一些方式</p>
+</blockquote>
+
+<h2 id="3-2-解决数据量较大问题">3.2、解决数据量较大问题</h2>
+
+<h3 id="3-2-1-数据抽取方案-采用">3.2.1、数据抽取方案（采用）</h3>
+
+<ul>
+<li>简介</li>
+</ul>
+
+<blockquote>
+<p>我们的系统是Saas系统，系统中有商户、运营商等业务角色。</p>
+
+<p>将订单表根据这些业务角色分别抽取出所需要的<code>年运营商数据表</code>、<code>月运营商数据表</code>、<code>日运营商数据表</code>等各种抽取表，后续运营商按照年查询数据的之后直接到对应的表里面直接查询，无需查询订单表等核心表。</p>
+</blockquote>
+
+<ul>
+<li>实现方案</li>
+</ul>
+
+<blockquote>
+<p>在订单入库的时候发一个订单的mq消息，数据抽取服务收到这个消息之后同步去修改对饮运营商的日、月、年的抽取表。</p>
+
+<p>加一个定时任务，每天晚上去全量抽取前一天的数据，去兜底mq消息消费失败的情况。</p>
+
+<p>写一个接口，在上线之后抽取之前没有抽取的数据。</p>
+</blockquote>
+
+<ul>
+<li>方案优势</li>
+</ul>
+
+<blockquote>
+<ul>
+<li>查询数据量极具变小，例如一个运营商一天有一万条数据，但抽取之后这一万条数据就变成了一条数据，极大的减少了数据查询两。</li>
+<li>减少查询核心订单表的次数，缓解了订单表的压力。</li>
+<li>实现方案较为简单，只需引入mq消息去同步修改抽取表的数据即可。</li>
+</ul>
+</blockquote>
+
+<ul>
+<li>方案劣势</li>
+</ul>
+
+<blockquote>
+<ul>
+<li>订单表数据量大的问题没有解决，对于一些必须查询订单表的情况可能不大友好。</li>
+<li>引入mq这种消息就面临着这种数据的不一致问题（运营允许当天数据可以不准确，所以对我们影响不大）</li>
+</ul>
+</blockquote>
+
+<h3 id="3-2-2-分表方案-未采用">3.2.2、分表方案（未采用）</h3>
+
+<ul>
+<li>简介</li>
+</ul>
+
+<blockquote>
+<p>将订单表等核心表按照运营商id去分表，每个运营商一个表。</p>
+</blockquote>
+
+<ul>
+<li>实现方案</li>
+</ul>
+
+<blockquote>
+<ul>
+<li>方案1</li>
+</ul>
+
+<blockquote>
+<p>使用市面常用的分库分表中间件去实现</p>
+</blockquote>
+
+<ul>
+<li>方案2</li>
+</ul>
+
+<blockquote>
+<p>自定mybatis插件去拦截SQL，然后根据查询条件映射到分表中去。</p>
+</blockquote>
+</blockquote>
+
+<ul>
+<li>方案优势</li>
+</ul>
+
+<blockquote>
+<p>可以解决订单表数据量大的问题</p>
+</blockquote>
+
+<ul>
+<li>方案劣势</li>
+</ul>
+
+<blockquote>
+<ul>
+<li>根据二八定律，可以知道80%的订单来自于20%的运营商，所以极端情况可能导致某个运营商的分表的数据量很大，无法解决报表查询数据缓慢问题。</li>
+<li>实现方案比较复杂。</li>
+</ul>
+</blockquote>
+
+<h3 id="3-2-3-数据抽取-分表-最佳方案">3.2.3、数据抽取+分表（最佳方案）</h3>
+
+<blockquote>
+<p>将上面两种方案结合起来使用。</p>
+
+<ul>
+<li>先按照每个运营商分表</li>
+<li>在对每个分表进行数据抽取</li>
+</ul>
+</blockquote>
+
+<p>较为复杂</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

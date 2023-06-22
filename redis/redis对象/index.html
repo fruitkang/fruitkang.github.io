@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Redis对象 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis对象"/>
+<meta name="twitter:description" content="一、简介  Redis并没有使用我们之前介绍的数据结构来实现键值对数据库，而是基于这些数据结构创建了一个对象系统。每种对象都用到了至少一种我们前面介绍的数据结构。
+ 二、对象的类型和编码  Redis使用对象表示数据库中的键和值，每次当我在Redis的数据库添加一个键值对的时候，我们至少会创建两个对象，一个对象用作键值对的键（键对象），另一个对象用作键值对的值（值对象）。
+ 2.1、redisObject的结构  typedef struct redisObject{ //类型 unsigned type:4; //编码 unsigned encoding:4; //指向底层实现数据结构的指针 void *ptr; //... }  解释：
+ type属性：指明当前Redis对象时什么类型。有以下五种类型。     类型常量 对象名称     REDIS_STRING 字符串对象   REDIS_LIST 列表对象   REDIS_HASH 哈希对象   REDIS_SET 集合对象   REDIS_ZSET 有序集合对象     encoding属性：指明了这个对象使用了什么数据结构作为对象的底层实现。encoding设定对象所使用的编码，而不是为特定的类型对象关联一种固定的编码，极大的提升了Redis的灵活性和效率。
+ ptr属性：指向对象底层使用数据结构的实现。
+  举例：
+ 2.2、字符串对象 1、字符串对象有三种编码方式"/>
+
+    <meta property="og:title" content="Redis对象" />
+<meta property="og:description" content="一、简介  Redis并没有使用我们之前介绍的数据结构来实现键值对数据库，而是基于这些数据结构创建了一个对象系统。每种对象都用到了至少一种我们前面介绍的数据结构。
+ 二、对象的类型和编码  Redis使用对象表示数据库中的键和值，每次当我在Redis的数据库添加一个键值对的时候，我们至少会创建两个对象，一个对象用作键值对的键（键对象），另一个对象用作键值对的值（值对象）。
+ 2.1、redisObject的结构  typedef struct redisObject{ //类型 unsigned type:4; //编码 unsigned encoding:4; //指向底层实现数据结构的指针 void *ptr; //... }  解释：
+ type属性：指明当前Redis对象时什么类型。有以下五种类型。     类型常量 对象名称     REDIS_STRING 字符串对象   REDIS_LIST 列表对象   REDIS_HASH 哈希对象   REDIS_SET 集合对象   REDIS_ZSET 有序集合对象     encoding属性：指明了这个对象使用了什么数据结构作为对象的底层实现。encoding设定对象所使用的编码，而不是为特定的类型对象关联一种固定的编码，极大的提升了Redis的灵活性和效率。
+ ptr属性：指向对象底层使用数据结构的实现。
+  举例：
+ 2.2、字符串对象 1、字符串对象有三种编码方式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/redis/redis%E5%AF%B9%E8%B1%A1/" />
+<meta property="article:published_time" content="2022-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2022-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Redis对象</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/redis/">Redis</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="一-简介">一、简介</h1>
+
+<blockquote>
+<p>Redis并没有使用我们之前介绍的数据结构来实现键值对数据库，而是基于这些数据结构创建了一个<strong>对象系统</strong>。每种对象都用到了至少一种我们前面介绍的数据结构。</p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211703881.jpg" alt="img" /></p>
+
+<h1 id="二-对象的类型和编码">二、对象的类型和编码</h1>
+
+<blockquote>
+<p>Redis使用对象表示数据库中的键和值，每次当我在Redis的数据库添加一个键值对的时候，我们至少会创建两个对象，一个对象用作键值对的键（键对象），另一个对象用作键值对的值（值对象）。</p>
+</blockquote>
+
+<h2 id="2-1-redisobject的结构">2.1、redisObject的结构</h2>
+
+<blockquote>
+<pre><code class="language-c">typedef struct redisObject{
+
+ //类型
+ unsigned type:4;
+
+ //编码
+ unsigned encoding:4;
+
+ //指向底层实现数据结构的指针
+ void *ptr;
+ //...
+
+}
+</code></pre>
+
+<p>解释：</p>
+
+<ul>
+<li>type属性：指明当前Redis对象时什么类型。有以下五种类型。</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th>类型常量</th>
+<th>对象名称</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>REDIS_STRING</td>
+<td>字符串对象</td>
+</tr>
+
+<tr>
+<td>REDIS_LIST</td>
+<td>列表对象</td>
+</tr>
+
+<tr>
+<td>REDIS_HASH</td>
+<td>哈希对象</td>
+</tr>
+
+<tr>
+<td>REDIS_SET</td>
+<td>集合对象</td>
+</tr>
+
+<tr>
+<td>REDIS_ZSET</td>
+<td>有序集合对象</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li><p>encoding属性：指明了这个对象使用了什么数据结构作为对象的底层实现。encoding设定对象所使用的编码，而不是为特定的类型对象关联一种固定的编码，极大的提升了Redis的灵活性和效率。</p></li>
+
+<li><p>ptr属性：指向对象底层使用数据结构的实现。</p></li>
+</ul>
+
+<p>举例：</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211707683.jpg" alt="img" /></p>
+</blockquote>
+
+<h2 id="2-2-字符串对象">2.2、字符串对象</h2>
+
+<p>1、字符串对象有三种编码方式</p>
+
+<blockquote>
+<p>字符串对象有三种编码方式</p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>编码</th>
+<th>对象</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>REDIS_STRING</td>
+<td>REDIS_ENCODING_INT</td>
+<td>使用整数值实现的字符串对象</td>
+</tr>
+
+<tr>
+<td>REDIS_STRING</td>
+<td>REDIS_ENCODING_EMBSTR</td>
+<td>使用embstr编码的简单动态字符串实现的字符串对象</td>
+</tr>
+
+<tr>
+<td>REDIS_STRING</td>
+<td>REDIS_ENCODING_RAW</td>
+<td>使用简单动态字符串实现的字符串对象</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li><code>编码为int</code></li>
+</ul>
+
+<p>如果一个字符串对象保存一个整数值，并且这个整数值可以使用long类型表示，那么字符串对象会将整数值保存在字符串对象的ptr属性里面（将void *ptr 转换为 long ptr），并将字符串对象的编码设置为int。</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211709675.jpg" alt="img" /></p>
+
+<ul>
+<li><code>编码为embstr</code></li>
+</ul>
+
+<p>当字符串值的长度小于等于39字节，那么字符串对象将会使用embstr编码的方式来保存字符串值。</p>
+
+<p>embstr编码是为了专门保存短字符串的一种优化编码方式。</p>
+
+<p>embstr编码通过一次分配连续的空间，空间中依次包含redisObject和sdshdr两个结构。</p>
+
+<p>embstr编码创建字符串和释放字符串都只需要依次内存空间的分配与释放。</p>
+
+<p>embstr编码的方式能够更好的利用缓存（因为内存连续）。</p>
+
+<p><strong>编码为raw：</strong>当字符值的长度大于39字节的时候，使用raw编码。</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211711958.jpg" alt="img" /></p>
+
+<p>浮点类型（long double）也是使用embstr编码的方式进行存储。</p>
+</blockquote>
+
+<p>2、编码的转换（重点）</p>
+
+<blockquote>
+<p>1、通过append命令将一个int编码的字符串转换为raw编码。</p>
+
+<p>2、embstr编码的字符串对象在执行任何修改命令时都会转换为raw编码。</p>
+
+<p>3、embstr编码的字符串对象是只读的，修改时会转换为raw编码的。</p>
+</blockquote>
+
+<h2 id="2-3-列表对象">2.3、列表对象</h2>
+
+<p>1、编码方式</p>
+
+<blockquote>
+<p>列表you两种编码方式</p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>编码</th>
+<th>对象</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>REDIS_LIST</td>
+<td>REDIS_ENCODING_ZIPLIST</td>
+<td>压缩列表实现</td>
+</tr>
+
+<tr>
+<td>REDIS_LIST</td>
+<td>REDIS_ENCODING_LINKEDLIST</td>
+<td>双端链表实现</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+
+<p>2、编码的转换（重点）</p>
+
+<blockquote>
+<p>当列表对象可以同时满足以下两个条件的时候，列表对象使用ziplist编码。</p>
+
+<p>1、列表对象保存的所有字符元素的长度都小于64个字节。</p>
+
+<p>2、列表对象保存的元素数量小于512个。</p>
+
+<p>注意上面的两个值可以修改，通过修改redis配置文件中list-max-ziplist-value和list-max-ziplist-entries。</p>
+</blockquote>
+
+<h2 id="2-4-哈希对象">2.4、哈希对象</h2>
+
+<p>1、编码方式</p>
+
+<blockquote>
+<p>hash有两种编码方式</p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>编码</th>
+<th>对象</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>REDIS_HASH</td>
+<td>REDIS_ENCODING_ZIPLIST</td>
+<td>压缩列表实现</td>
+</tr>
+
+<tr>
+<td>REDIS_HASH</td>
+<td>REDIS_ENCODING_HT</td>
+<td>字典实现</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>ziplist编码</code></p>
+
+<p>使用压缩列表实现，当有新的键值对加入到哈希对相关的时候，程序先会将新增键值对的键放入压缩压缩列表尾端，然后将值放入压缩列表的尾端。也就是使用压缩列表的哈希对象的键和值的内存空间总是紧挨在一起的，键在前，值在后。</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211715250.jpg" alt="img" /></p>
+</blockquote>
+
+<p>2、编码转换（重点）</p>
+
+<blockquote>
+<p>当同时满足以下条件的时候，哈希对象将会使用ziplist编码。</p>
+
+<p>1、哈希对象保存的所有键值对的键和值的字符串长度都小于64字节。</p>
+
+<p>2、哈希表对象保存的键值对数量小于512个。</p>
+
+<p><code>注意</code>：上面这两个值可以修改，通过redis配置文件hash-max-ziplist-value和hash-max-ziplist-entries</p>
+</blockquote>
+
+<h2 id="2-5-集合对象">2.5、集合对象</h2>
+
+<p><strong>1、编码方式</strong></p>
+
+<blockquote>
+<p>集合有两种编码方式</p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>编码</th>
+<th>对象</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>REDIS_SET</td>
+<td>REDIS_ENCODING_INTSET</td>
+<td>整数集合实现</td>
+</tr>
+
+<tr>
+<td>REDIS_SET</td>
+<td>REDIS_ENCODING_HT</td>
+<td>字典实现</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>哈希表编码</code></p>
+
+<p>​      使用字典实现，字典的每一个键都是一个字符串对象，每个字符串对象保存一个集合元素，字典的值全部为null。</p>
+</blockquote>
+
+<p>2、编码转换（重点）</p>
+
+<blockquote>
+<p>当同时满足以下两个条件的时候，集合对象同时使用intset编码。</p>
+
+<p>1、集合对象保存的所有元素都是整数值。</p>
+
+<p>2、集合对象保存的元素数量不超过512个。</p>
+
+<p><code>注意</code>：第二个条件的上限可以被修改，redis配置文件set-max-intset-entries</p>
+</blockquote>
+
+<h2 id="2-6-有序集合对象">2.6、有序集合对象</h2>
+
+<p>1、编码方式</p>
+
+<blockquote>
+<p>有两种编码方式</p>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>编码</th>
+<th>对象</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>REDIS_ZSET</td>
+<td>REDIS_ENCODING_ZIPLIST</td>
+<td>压缩列表实现</td>
+</tr>
+
+<tr>
+<td>REDIS_ZSET</td>
+<td>REDIS_ENCODING_SKIPLIST</td>
+<td>跳跃表和字典实现</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>ziplist编码</code></p>
+
+<p>​      每个集合元素使用两个紧挨在一起的压缩列表节点保存，第一个节点保存元素成员，另一个节点保存元素的分值。集合元素按分值从小到大排序。</p>
+
+<p><code>skiplist编码</code></p>
+
+<p>​      使用跳跃表和字典实现的zet结构为底层实现。跳跃表按照分值大小将元素按从小打到排序。字典为有序集合创建了一个从成员到分值的映射，程序可以用O(1)的复杂度找到特定成员的分值。跳跃表和字典通过指针共用内存。</p>
+</blockquote>
+
+<p>2、编码的转换</p>
+
+<blockquote>
+<p>同时满足以下两个条件是，，对象使用ziplist编码。</p>
+
+<ul>
+<li><p>有序结合保存的元素数量小于128个。</p></li>
+
+<li><p>有序集合保存的所有成员的长度小于64字节。</p></li>
+</ul>
+
+<p>注意可以通过配置文件中zset-max-ziplist-entrise和zset-max-ziplist-value。</p>
+</blockquote>
+
+<h1 id="三-类型检测与命令多态">三、类型检测与命令多态</h1>
+
+<h2 id="3-1-简介">3.1、简介</h2>
+
+<blockquote>
+<p>redis中的命令分为两种，一种为可以对任何类型对象操作。还有一中命令只针对特定类型对象。</p>
+</blockquote>
+
+<h2 id="3-2-类型检测">3.2、类型检测</h2>
+
+<blockquote>
+<p>在执行一个命令之前，先会进行类型检测，然后在决定是否执行给定命令。</p>
+
+<p>类型检测通过redisObject结构的type属性来实现。</p>
+
+<p>如果检测到数据库键对象不能执行某个命令的话服务器将拒绝执行，并返回客户端一个错误。</p>
+</blockquote>
+
+<h2 id="3-3-多态命令的实现">3.3、多态命令的实现。</h2>
+
+<blockquote>
+<p>根据前面的知识，我们知道一种类型的对象可能有多种不同的编码，也就意味着底层使用不同的数据结构，也就是当我们执行一个命令的时候，服务器除了确保执行命令的键符合要求，还有根据redisObject对象encoding属性来判断使用命令的那个实现。</p>
+</blockquote>
+
+<h1 id="四-内存回收">四、内存回收</h1>
+
+<blockquote>
+<p>C语言本身不具备内存回收功能，redis根据引用计数技术实现了内存回收机制。</p>
+
+<p>当创建一个对象的时候，引用计数器的值被初始化为1。</p>
+
+<p>当一个对象对一个新的程序使用时，它的引用计数器的值被加1。</p>
+
+<p>当一个对象不再被程序使用时，它的引用计数器的值减1。</p>
+
+<p>当一个对象的引用计数器的值为0时，对象所占用的内存将会被释放。</p>
+</blockquote>
+
+<h1 id="五-对象共享">五、对象共享</h1>
+
+<blockquote>
+<p>基于引用计数器可以实现对象共享。</p>
+
+<p>redis服务在启动初始化的时候会创建一万个字符串对象，这些对象包含了0~9999的所有整数。之后当服务器在使用这些对象的时候不要重新创建，而是共享对象。</p>
+</blockquote>
+
+<h1 id="六-对象的空转时长">六、对象的空转时长</h1>
+
+<blockquote>
+<p>redis的redisObject结构中还包含了一个lru属性，该属性记录了对象最后一次被命令程序访问的时间。</p>
+</blockquote>
+
+<h1 id="七-总结">七、总结</h1>
+
+<ul>
+<li><p>Redis中每个键值对的键和值都是一个对象。</p></li>
+
+<li><p>Redis中有5中类型对象。</p></li>
+
+<li><p>类型检测</p></li>
+
+<li><p>内存回收、对象引用。</p></li>
+
+<li><p>Redis共享0~9999的字符串。</p></li>
+
+<li><p>redisObject的lur属性记录对象访问的最后一次时间。</p></li>
+</ul>
+
+<p>0、补充</p>
+
+<ul>
+<li><p>Redis的对象系统还实现了<strong>基于引用计数技术的垃圾回收机制</strong>，当程序不再使用某个对象的时候，这个对象所占用的内存就会被自动释放。通过引用计数计数，Redis还实现了<strong>对象共享机制</strong>。</p></li>
+
+<li><p>Reids的对象带有访问时间积累信息，该信息可以计算数据库键的<strong>空转时长</strong>，在服务器启用了<strong>maxmemory功能</strong>的情况下，空转时长较大的那些键可能会被优先被服务器删除。</p></li>
+
+<li><p>Redis在执行命令的时候，会先判断对象的数据类型是否可以执行指定命令。</p></li>
+
+<li><p>字符串对象时Redis五种类型对象中唯一一种会被其他四种对象类型嵌套的对象。</p></li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

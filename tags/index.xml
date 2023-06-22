@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on 果汁康</title>
+    <link>https://fruitkang.github.io/tags/</link>
+    <description>Recent content in Tags on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Books</title>
+      <link>https://fruitkang.github.io/tags/books/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/books/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://fruitkang.github.io/tags/docker/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Framework</title>
+      <link>https://fruitkang.github.io/tags/framework/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/framework/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java</title>
+      <link>https://fruitkang.github.io/tags/java/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://fruitkang.github.io/tags/linux/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mysql</title>
+      <link>https://fruitkang.github.io/tags/mysql/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Nginx</title>
+      <link>https://fruitkang.github.io/tags/nginx/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/nginx/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Others</title>
+      <link>https://fruitkang.github.io/tags/others/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/others/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Redis</title>
+      <link>https://fruitkang.github.io/tags/redis/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tools</title>
+      <link>https://fruitkang.github.io/tags/tools/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/tools/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Works</title>
+      <link>https://fruitkang.github.io/tags/works/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tags/works/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

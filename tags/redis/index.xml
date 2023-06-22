@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Redis on 果汁康</title>
+    <link>https://fruitkang.github.io/tags/redis/</link>
+    <description>Recent content in Redis on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Redis列表</title>
+      <link>https://fruitkang.github.io/redis/redis%E5%88%97%E8%A1%A8/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E5%88%97%E8%A1%A8/</guid>
+      <description>1、简介  Redis使用的C语言中没有列表这一结构，所以Redis自己实现这一结构。Redis中列表键底层实现就是一个列表。提到列表就必须提到列表结点和列表这两种结构。
+ 2、列表结点  列表结点的定义   typedef struct listNode{ //前置结点 struct listNode *prev; //后置结点 struct listNode *next; //结点的值 void *value; }    列表结点的结构图   说明：void *value;   在C语言中void*指针是无类型指针，也就是可以指向任何类型的指针。列表结点使用void*指针来保存结点的值，所以列表的结点可以保存各种不同类型的值。
+ 3、列表  列表的定义   typedef struct list{ //表头结点 listNode *head； //表尾结点 listNode *tail; //列表所含的结点数量 unsigned long len; //实现多态列表所需的类型特定函数 //结点值复制函数 void *(*dup)(void *ptr) //结点值释放函数 void (*free)(void *ptr); //结点值对比函数 int (*match) (void *ptr,void *key) }    列表的结构图   解释：</description>
+    </item>
+    
+    <item>
+      <title>Redis字典</title>
+      <link>https://fruitkang.github.io/redis/redis%E5%AD%97%E5%85%B8/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E5%AD%97%E5%85%B8/</guid>
+      <description>1、简介
+字典 = 符号表 = 关联数组 = 映射 = 键值对。
+字典中的键是独一无二的，不可重复的。
+Redis数据库底层使用字典来实现。
+字典是Redis中哈希键的底层实现之一。
+字典底层使用哈希表作为实现，一个哈希表可以有很多哈希表结点，每个哈希表结点保存了字典中的一个键值对。
+2、哈希表结点
+\1. 哈希表结点的定义
+typedef struct dictEntry{
+//键
+void* key;
+//值
+union{
+​ void* val；
+​ uint64_t u64;
+​ int64_t s64;
+} v;
+//指向下一个哈希表结点，形成链表。
+struct dictEntry *next;
+} dictEntry;
+代码解释：
+key代表的键值对中的键，是唯一的，不可重复的。
+v代表的键值对中的值，从代码中我们可以知道v是一个联合体类型（文章末尾有联合体的解释）的值，所以v既可以保存任何类型的指针，也可以保存uint64_t类型的整数，又或者可以保存一个int64_t类型整数。
+next属性是指向另一个哈希表结点的指针，可以将多个哈希结点形成链表，以此解决哈希冲突。
+\2. 哈希表结点的结构
+3、哈希表
+1、哈希表的定义
+// 哈希表
+typedef struct dictht{
+//哈希表数组
+dictEntry **tables;
+//哈希表大小
+unsigned long size;
+//哈希表大小掩码，用于计算索引值，总是等于size-1
+unsigned long sizemask;
+//该哈希表已有结点的数量
+unsigned long used;</description>
+    </item>
+    
+    <item>
+      <title>Redis跳跃表</title>
+      <link>https://fruitkang.github.io/redis/redis%E8%B7%B3%E8%B7%83%E8%A1%A8/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E8%B7%B3%E8%B7%83%E8%A1%A8/</guid>
+      <description>1、简介  一种有序的数据结构，通过在每个结点中维持多个指向其他节点的指针，从而达到快速访问节点的目的。 跳跃表支持平均O(logN)、最坏O(N)复杂度的结点查找。 Redis使用跳跃表作为有序集合键底层实现之一。 Redis中只有两个地方使用到了跳跃表，一个是实现有序集合键，另一个是在集群节点中作为内部数据结构。  2、总结  跳跃表是有序集合的底层实现之一。 每个跳跃表结点的高度都是在1至32之间的随机数（抛硬币概率）。 跳跃表的头结点的层数为32，分值为0，没有值。 同一个跳跃表中可以存在多个分值相同的结点，但不能存在值相同的结点。 跳跃表中的结点按照分值大小进行排序，当分值相同时，结点按照成员对象的大小进行排序。  3、参考文章 1、什么是跳跃表：https://www.jianshu.com/p/dc252b5efca6
+2、跳跃表及其底层是实现</description>
+    </item>
+    
+    <item>
+      <title>Redis限流脚本</title>
+      <link>https://fruitkang.github.io/redis/redis%E9%99%90%E6%B5%81%E8%84%9A%E6%9C%AC/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E9%99%90%E6%B5%81%E8%84%9A%E6%9C%AC/</guid>
+      <description>@Bean public DefaultRedisScript&amp;lt;Long&amp;gt; limitScript() { DefaultRedisScript&amp;lt;Long&amp;gt; redisScript = new DefaultRedisScript&amp;lt;&amp;gt;(); redisScript.setScriptText(limitScriptText()); redisScript.setResultType(Long.class); return redisScript; } /** * 限流脚本 */ private String limitScriptText() { return &amp;quot;local key = KEYS[1]\n&amp;quot; + &amp;quot;local count = tonumber(ARGV[1])\n&amp;quot; + &amp;quot;local time = tonumber(ARGV[2])\n&amp;quot; + &amp;quot;local current = redis.call(&#39;get&#39;, key);\n&amp;quot; + &amp;quot;if current and tonumber(current) &amp;gt; count then\n&amp;quot; + &amp;quot; return tonumber(current);\n&amp;quot; + &amp;quot;end\n&amp;quot; + &amp;quot;current = redis.call(&#39;incr&#39;, key)\n&amp;quot; + &amp;quot;if tonumber(current) == 1 then\n&amp;quot; + &amp;quot; redis.</description>
+    </item>
+    
+    <item>
+      <title>位图BitSet</title>
+      <link>https://fruitkang.github.io/works/bitset%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Sat, 20 Aug 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/bitset%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description> 1、简介  在谈什么是位图之前我们先来看一道&amp;rdquo;非常简单的题&amp;rdquo;：有40亿个无符号的整型数据，现在给定一个目标数字，判断这个数字是否在这40亿数据中。题目看起来确实非常简单，有的同学说直接遍历一遍不就ok了吗？还有的同学给出了更高效的查找方式就是将这些数字排序然后进行二分查找。但是，这是有问题的，问题并不在于你搜索这个数字的效率问题，而是你在遍历也好排序也罢，这些数字在内存中放的下么？
+一个整型int就是4个字节，10亿个int差不多已经需要4G的内存了，40亿个int就是16G。所以这里方法行不通的根本原因实际上是内存不够，但是我们今天的讲的位图却能很好的帮助我们处理这个问题。
+ 2、位图模型  既然根本原因是这些数据用int放不下，那么是否有更小的东西标记这些数字呢？没错，有的同学想到了，char只占一个字节或许能表示一个数字，但是随着数字位数的增多，依旧不可能使用一个字符表示一个数字，这就意味着小于4G内存还是不能解决这个问题。
+其实说到这里，我们的问题就转化为如何使用更小的内存单元来标记一个数字，而在程序中我们最小的访问单位的bit位，所以现在我们一起来看使用比特位如何标记(映射)这些数据。
+现在我们发现，4个字节本来只能存储一个int，而现在使用位图我们就存了(映射)32个数字，意味着16G/32约等于500m左右我们就能映射这些数据。
+ 3、工作的使用  使用redis中提供的bitset结构统计活跃用户数
+ </description>
+    </item>
+    
+    <item>
+      <title>Redis删除大Key</title>
+      <link>https://fruitkang.github.io/redis/redis%E5%88%A0%E9%99%A4%E5%A4%A7key/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E5%88%A0%E9%99%A4%E5%A4%A7key/</guid>
+      <description>0、redis中的大Key    大Key 解释     hash 映射表   set 集合   zset 有序集合   list 列表    1、问题 线上出现Redis大Key该如何删除？
+1、低峰期删除  在业务的低峰期删除大Key，例如凌晨4点的时候去删除大Key，虽然这依旧会导致阻塞问题，但是影响比较小，适用于QPS小的业务。
+ 2、分批删除法    大Key 分批删除方法       hash 使用hscan分批删除 hscan命令用来迭代hash表中键值对，然后通过hdel命令逐个删除每个键值对    set 使用Srandmember命令分批删除 Srandmember 命令用于返回集合中的一个或多个随机元素，然后使用Srem命令删除元素    zset 使用Zremrangebyrank 命令分批删除 Zremrangebyrank 命令用于移除有序集中，指定排名(rank)区间内的所有成员。    list 使用Lpop或Rpop命令逐个删除 Lpop 命令用于移除并返回列表的第一个元素。Rpop 命令用于移除并返回列表的最后一个元素。     3、异步删除 Redis4.</description>
+    </item>
+    
+    <item>
+      <title>Redis压缩列表</title>
+      <link>https://fruitkang.github.io/redis/redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/</guid>
+      <description>一、简介  压缩列表是列表键和哈希键底层实现之一。
+压缩列表是Redis为了节省内存而开发的。
+压缩列表是由一系列特殊编码的连续内存块组成的顺序型数据结构。
+一个压缩列表可以包含任意多个节点，每个节点可以保存一个字节数组或者一个整数值。
+ 二、压缩列表 2.1、压缩列表结构 2.2、压缩列表结构解释（重点）    属性 类型 长度 用途     zlbytes uint32_t 4字节 记录整个压缩列表占用的内存字节数：在对压缩列表进行内存重分配或者计算zlend的位置时使用   zttail uint32_t 4字节 记录压缩列表尾结点距离压缩列表起始地址有多少字节：通过这个偏移量，程序无需遍历整个压缩列表就可以确定尾节点   zllen uint16_t 2字节 记录压缩列表中节点的数量：当这个属性的值小于UINT16_MAX（65535）时，这个属性的值就是压缩列表当前所包含节点的个数。当这个属性等于UINT16_MAX（65535）时，节点的真实数量需要遍历整个压缩列表才能知道   entryX 列表节点 不定 压缩列表的各个节点，节点的长度由节点的内容决定   zlend uint8_t 1字节 特殊值0xFF（十进制255），用于标记压缩列表的尾端    2.3、压缩列表节点 2.3.1、压缩列表节点结构 2.3.2、压缩列表节点结构解释（重点）  previous_entry_length属性以字节为单位，记录了压缩列表中前一个节点的长度。   当前一字节的长度小于254字节，previous_entry_length占用1字节。
+当前一字节的长度大于等于254字节，previous_entry_length占用5字节，其中第一字节会被设置为0xFE（254），而之后的四个字节用来保存前一字节的长度。
+因为后面节点记录前面节点的长度，所以可以根据当前节点的起始指针就算出前一个节点的起始指针。也就可以实现从表尾节点向表头节点的遍历过程。
+  encoding属性记录了节点保存数据的类型以及长度。
+ content属性负责保存节点的值，节点值可以是一个字节数组或者整数，值的类型和长度有encoding属性决定。
+  3、连锁更新（详细请看书）  连锁更新在最坏情况下需要多压缩列表进行N次空间重新分配操作，而每次空间分配的最坏时间复杂度为O(N)，所以整个连锁更新的最坏复杂为O(n*n)；连锁更新有较高的复杂度，但他真正造成性能问题的几率是很低的。</description>
+    </item>
+    
+    <item>
+      <title>Redis对象</title>
+      <link>https://fruitkang.github.io/redis/redis%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E5%AF%B9%E8%B1%A1/</guid>
+      <description>一、简介  Redis并没有使用我们之前介绍的数据结构来实现键值对数据库，而是基于这些数据结构创建了一个对象系统。每种对象都用到了至少一种我们前面介绍的数据结构。
+ 二、对象的类型和编码  Redis使用对象表示数据库中的键和值，每次当我在Redis的数据库添加一个键值对的时候，我们至少会创建两个对象，一个对象用作键值对的键（键对象），另一个对象用作键值对的值（值对象）。
+ 2.1、redisObject的结构  typedef struct redisObject{ //类型 unsigned type:4; //编码 unsigned encoding:4; //指向底层实现数据结构的指针 void *ptr; //... }  解释：
+ type属性：指明当前Redis对象时什么类型。有以下五种类型。     类型常量 对象名称     REDIS_STRING 字符串对象   REDIS_LIST 列表对象   REDIS_HASH 哈希对象   REDIS_SET 集合对象   REDIS_ZSET 有序集合对象     encoding属性：指明了这个对象使用了什么数据结构作为对象的底层实现。encoding设定对象所使用的编码，而不是为特定的类型对象关联一种固定的编码，极大的提升了Redis的灵活性和效率。
+ ptr属性：指向对象底层使用数据结构的实现。
+  举例：
+ 2.2、字符串对象 1、字符串对象有三种编码方式</description>
+    </item>
+    
+    <item>
+      <title>Redis整数集合</title>
+      <link>https://fruitkang.github.io/redis/redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</guid>
+      <description>一、简介   整数集合是Redis集合键的底层实现之一。 整数集合（intset）中不会出现重复元素。 整数集合可以保存类型为int6_t、int32_t、int63_t的整数值。 整数集合底层使用数组来保存值，且保存的值按从小到大有序排列。 整数集合   二、整数集合结构 2.1、定义  typedef struct intset{ //编码方式 uint32_t encoding; //集合包含的元素数量 uint32_t length; //保存元素使用的容器（数组） int8_t contents[]; }   2.2、解释  encoding属性将会决定contents数组的真正类型。其中encoding属性可以为以下三个值：   当encoding属性为INTSET_ENC_INTT16，那么contents数组就是一个int16_t类型的数组。
+当encoding属性为INTSET_ENC_INTT32，那么contents数组就是一个int32_t类型的数组。
+当encoding属性为INTSET_ENC_INTT64，那么contents数组就是一个int64_t类型的数组
+  length属性记录当前整数集合包含的元素数量，也就是contents数组的长度。
+ 虽然contents数组声明为int8_t类型的，但实际contents数组不会保存任何int8_t类型的值，contents数组的真正类型取决于encoding属性的值。contents数组的元素是按照从小到大有序排列，且不会重复。
+  2.3、整数集合的升级 2.3.1、简介  当我们要将一个新元素添加到整数集合里面，并且新元素的类型比整数集合现有所有元素的类型都要长时，整数集合需要整体先进行升级，然后才能将新元素加入到整数集合中。
+ 2.3.2、整数集合升级步骤  原整数集合中元素的类型为int16_t类型。如图所示：   给集合中添加一个int32_t类型的值（65535）。因为原contents数组保存的是3个int16_t类型的元素，也就是原数组的长度为16*3=48位。现在由于要添加一个int32_t的元素，所以必须将数组中的所有元素进行升级为int32_t类型，所以升级之后数组的长度（包括要添加的新元素）为32*4=128位。所以集合将会变为如下图所示。   现在集合中的元素有【1,2,3,65535】，元素3在四个元素中排名第三，则它将被移动到contents数组索引为2的位置（64位~95位）。   现在集合中的元素有【1,2,3,65535】，元素2在四个元素中排名第二，则它将被移动到contents数组索引为1的位置（32位~63位）。   现在集合中的元素有【1,2,3,65535】，元素2在四个元素中排名第1，则它将被移动到contents数组索引为0的位置（0位~31位）。   现在集合中的元素有【1,2,3,65535】，元素65535在四个元素中排名第4，则它将被移动到contents数组索引为3的位置（95位~127位）。  2.3.3、注意：  encoding属性和length属性是在将65535添加到集合中之后才修改的，上面的图有一点小错误。</description>
+    </item>
+    
+    <item>
+      <title>Redis简单动态字符串</title>
+      <link>https://fruitkang.github.io/redis/redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2/</guid>
+      <description>一、简介  简单动态字符串简称为SDS，是Redis中的一种数据结构，作用就是为了表示字符串。
+ 二、问题  我们知道Redis是由C语言编写的，那为何Redis不使用C语言中传统的字符串表示，而是重新定义了一个简单动态字符串的结构来表示字符串呢？
+ 三、简单动态字符串 3.1、简单动态字符串的定义 struct sdshdr{ //记录buf字符数组中已经使用的字符的数量 int len; //记录buf数组中未使用的字符的数量 int free; //字符数组，用来保存字符串 char buf[]; }  3.2、简单动态字符串的结构图 3.3、细节解释  free属性的值为0，代表该SDS没有分配任何未使用空间。
+ len属性的值代表的值不包括字符串结尾的字符 ‘\0’ 。
+ 在SDS中遵守了C语言中以 ‘\0’ 为字符串结尾的惯例。遵守这一规定的好处就是直接重用C字符串的一部分函数。
+  3.4、C语言字符串与简单动态字符串的区别    C字符串 SDS简单动态字符串     获取字符串长度时间复杂度为O(N) 获取字符串长度时间复杂度为O(1)   API不安全，可能导致缓冲区溢出 API安全，不会导致缓冲区溢出   修改字符串N，必然需要重分配内存N次 修改字符串N次，最多需要分配N次内存   只能保存文本数据 可以保存文本，二进制   可以使用全部库中的函数 可以使用部分库中的函数    1、SDS常数复杂度获取字符串长度  因为C语言字符串不记录本身的长度信息，所以要获取C字符串长度，就必须遍历整个C字符串，这个操作的复杂为O(n)。但是简单动态字符本身使用len属性记录其长度，所以获取一个SDS长度的复杂度为O(1)。</description>
+    </item>
+    
+    <item>
+      <title>Redis脑裂</title>
+      <link>https://fruitkang.github.io/redis/redis%E8%84%91%E8%A3%82/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/redis%E8%84%91%E8%A3%82/</guid>
+      <description> 1、问题严重性 Redis脑裂会导致数据丢失。
+2、问题现象 在Redis中集群中多个master。
+3、出现条件  redis集群
+ redis集群以一主多从架构
+ master进行写数据，slave进行读数据。
+  4、问题出现的原因  一般生产环境中都会涉及到redis集群，并且以一主多从的架构进行搭建redis集群，master中进行写操作，slave中进行读操作，master写入的数据将会同步到slave中。
+上诉的这种redis集群架构在极端情况下将会发生redis脑裂这种事。当redis集群内部出现问题的时候，master与从slave出现问题，无法正常连接，但master与客户端是能够正常连接的，这时候哨兵发现了master断开连接了，所以会在slave中重新选取新master，这时候集群就出现了两个master，旧的客户端依旧连接的旧的master，新的客户端会连接到新master，此时旧的客户端往旧master写入的数据无法同步到slave中，但读数据是从slave中读取的，所以这部分数据是无法读取到的。
+上诉也就是出现了读不到数据的问题。严重的问题出现在当旧master重新与slave取得联系之后，旧的master就会从master转变为slave，从master转变为slave意味着旧master的数据将会被全部清空然后从新master同步数据。这就意味着旧客户端写入旧master的数据将会被清空丢失。
+ 5、解决方案  主要通过设置参数来解决
+将参数min-slave-to-write为1，设置主库能进行数据同步的最小从库数据为1，当小于这个参数的时候主库将会拒绝客户端写入，返回错误给客户端。
+将参数min-slave-max-lag=10，设置主从库进行数据复制时，从库向主从发送ack消息的最大延迟为10秒，当旧master超过10秒没有收到salve的的回复的时候，老master将会拒绝客户端写入，返回错误给客户端。
+ </description>
+    </item>
+    
+    <item>
+      <title>布隆过滤器</title>
+      <link>https://fruitkang.github.io/redis/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</guid>
+      <description>1、简介  本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构（probabilistic data structure），特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存在或者可能存在”。
+相比于传统的 List、Set、Map 等数据结构，它更高效、占用空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。
+ 2、实现原理  HashMap 的问题   讲述布隆过滤器的原理之前，我们先思考一下，通常你判断某个元素是否存在用的是什么？应该蛮多人回答 HashMap 吧，确实可以将值映射到 HashMap 的 Key，然后可以在 O(1) 的时间复杂度内返回结果，效率奇高。但是 HashMap 的实现也有缺点，例如存储容量占比高，考虑到负载因子的存在，通常空间是不能被用满的，而一旦你的值很多例如上亿的时候，那 HashMap 占据的内存大小就变得很可观了。
+还比如说你的数据集存储在远程服务器上，本地服务接受输入，而数据集非常大不可能一次性读进内存构建 HashMap 的时候，也会存在问题。
+  布隆过滤器数据结构   布隆过滤器是一个 bit 向量或者说 bit 数组，长这样：
+如果我们要映射一个值到布隆过滤器中，我们需要使用多个不同的哈希函数生成多个哈希值，并对每个生成的哈希值指向的 bit 位置 1，例如针对值 “baidu” 和三个不同的哈希函数分别生成了哈希值 1、4、7，则上图转变为：
+Ok，我们现在再存一个值 “tencent”，如果哈希函数返回 3、4、8 的话，图继续变为：
+  注意    值得注意的是，4 这个 bit 位由于两个值的哈希函数都返回了这个 bit 位，因此它被覆盖了。现在我们如果想查询 “dianping” 这个值是否存在，哈希函数返回了 1、5、8三个值，结果我们发现 5 这个 bit 位上的值为 0，说明没有任何一个值映射到这个 bit 位上，因此我们可以很确定地说 “dianping” 这个值不存在。而当我们需要查询 “baidu” 这个值是否存在的话，那么哈希函数必然会返回 1、4、7，然后我们检查发现这三个 bit 位上的值均为 1，那么我们可以说 “baidu” 存在了么？答案是不可以，只能是 “baidu” 这个值可能存在。</description>
+    </item>
+    
+    <item>
+      <title>缓存穿透、击穿、雪崩该怎么办？</title>
+      <link>https://fruitkang.github.io/redis/%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E5%87%BB%E7%A9%BF%E9%9B%AA%E5%B4%A9%E8%AF%A5%E6%80%8E%E4%B9%88%E5%8A%9E/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/redis/%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E5%87%BB%E7%A9%BF%E9%9B%AA%E5%B4%A9%E8%AF%A5%E6%80%8E%E4%B9%88%E5%8A%9E/</guid>
+      <description> 1、缓存穿透 1、问题描述 大量请求一些不会走缓存的数据，导致大量请求直接打到DB，导致系统崩溃。例如请求user_id=-1的用户信息，由于数据库不存在用户id为负数的用户信息，所以缓存就会一直不命中，所以请求一直打到DB中。
+2、解决方案  前端校验：通过前端校验，使不合法的请求不能够请求到服务中。
+ 后端校验：对于不合法的参数，直接返回错误提示。
+ 空值缓存：对数据库中查询到的空值做缓存，且让空值的缓存时间较短一点。
+ hash校验：使用数据量不多的场景，将数据存在hash中，每次请求时先判断hash中是否存在，不存在则直接返回。
+ 位图标记：使用比特位进行标志
+ 布隆过滤器：不能100%的拦截。
+  2、缓存击穿 1、问题描述 某一个热点数据在某一刻缓存过期，大量请求直接打到了DB。
+2、解决方案  分布式锁，通过setnx或zookeeper实现分布式锁，使得只有一个good_id=1能够进入DB，其他请求就可以拿到第一个请求设置的缓存了。
+ 单机锁，集群数量不多的时候可以使用单机锁控制，假设只有10太机器，那么最多也就有10个请求直接打到DB，问题不大，没有必要使用分布式这种高级锁。
+ 二级缓存，当redis中不存在的时候可以去二级缓存中去找，防止直接打到DB，二级缓存可以使用内存缓存等方式。
+ 热点数据不过期，将热点数据设置永久不过期。
+  3、缓存雪崩 1、问题描述 在某一时刻，大量缓存失效，大量请求直接打到DB中。
+2、解决方案  缓存失效的时间随机一些，降低同时失效的概率
+ 上锁
+ 二级缓存
+  Tap  缓存击穿指的是单个key过期导致的大量关于这个可以的请求直接打到DB。 缓存雪崩指的是许多key过期导致大量请求直接打到DB。
+ </description>
+    </item>
+    
+  </channel>
+</rss>

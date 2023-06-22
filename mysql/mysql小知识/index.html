@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Mysql小知识 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Mysql小知识"/>
+<meta name="twitter:description" content=" 1、复杂的sql要进行explain 主要是查看sql执行的计划的type属性。
+2、varchar和char的区别 varchar是变长的，char是定长的，这里指的是字符串数。char类型的数据在长度不够是会使用空格补充，会浪费空间，但因为长度固定，所以char的存储速度比varchar快，char最多能放255个字符和编码方式无关。varchar是变长的，如果长度小于定义的长度，会按照实际长度存储，相比char更节省空间。但是因为是变长的，所以存取的速度 比char要慢。varchar在存储方面，若列的长度小于等于255字节，那需要额外一个字节来记录真实数据长度，若长度大于255，则需要两个字节记录真实数据的长度。
+3、mysql中datetime和timestamp的类型的区别  datetime占用8个字节，timestamp占用4个字节
+ datetime最大可以表示到9999年，timestamp最大可以表示到2038年
+  4、聚集索引与非聚集索引  聚集索引就是索引与表数据存储在一起，聚集索引的叶子节点存储的是整行数据，聚集所以一张表只有一个。
+ 非聚集索引就是索引与表数据不存储在一起，非聚集索引的叶子节点存储的是列值和主键。一张表可以有多个。
+  5、线上CPU暴涨如何排查  通过top命令确认cpu的占用情况
+ 通过show processlist来查看mysql的线程运行情况
+ 通过 show open tables where in_use &gt; 0 查看表锁情况。
+ 通过mysql的error_log查看是否有错误
+ 通过 SHOW ENGINE INNODB STATUS 查看是否有死锁
+ 通过慢查询日志，检查是否有慢查询。
+ 通过iostat来查看磁盘IO情况
+  iostat命令安装 yum install sysstat
+6、尽量使用not null  null值在mysql中占用时间，而空值不占用空间
+ 对于字段运行为null的时候，判断条件为is null 或者is not null
+ count（字段）不统计null值得列
+ null值比任何值都小，从小到大排序时，null值排在最前面
+  "/>
+
+    <meta property="og:title" content="Mysql小知识" />
+<meta property="og:description" content=" 1、复杂的sql要进行explain 主要是查看sql执行的计划的type属性。
+2、varchar和char的区别 varchar是变长的，char是定长的，这里指的是字符串数。char类型的数据在长度不够是会使用空格补充，会浪费空间，但因为长度固定，所以char的存储速度比varchar快，char最多能放255个字符和编码方式无关。varchar是变长的，如果长度小于定义的长度，会按照实际长度存储，相比char更节省空间。但是因为是变长的，所以存取的速度 比char要慢。varchar在存储方面，若列的长度小于等于255字节，那需要额外一个字节来记录真实数据长度，若长度大于255，则需要两个字节记录真实数据的长度。
+3、mysql中datetime和timestamp的类型的区别  datetime占用8个字节，timestamp占用4个字节
+ datetime最大可以表示到9999年，timestamp最大可以表示到2038年
+  4、聚集索引与非聚集索引  聚集索引就是索引与表数据存储在一起，聚集索引的叶子节点存储的是整行数据，聚集所以一张表只有一个。
+ 非聚集索引就是索引与表数据不存储在一起，非聚集索引的叶子节点存储的是列值和主键。一张表可以有多个。
+  5、线上CPU暴涨如何排查  通过top命令确认cpu的占用情况
+ 通过show processlist来查看mysql的线程运行情况
+ 通过 show open tables where in_use &gt; 0 查看表锁情况。
+ 通过mysql的error_log查看是否有错误
+ 通过 SHOW ENGINE INNODB STATUS 查看是否有死锁
+ 通过慢查询日志，检查是否有慢查询。
+ 通过iostat来查看磁盘IO情况
+  iostat命令安装 yum install sysstat
+6、尽量使用not null  null值在mysql中占用时间，而空值不占用空间
+ 对于字段运行为null的时候，判断条件为is null 或者is not null
+ count（字段）不统计null值得列
+ null值比任何值都小，从小到大排序时，null值排在最前面
+  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/mysql/mysql%E5%B0%8F%E7%9F%A5%E8%AF%86/" />
+<meta property="article:published_time" content="2023-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2023-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Mysql小知识</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/mysql/">Mysql</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h3 id="1-复杂的sql要进行explain">1、复杂的sql要进行explain</h3>
+
+<p>主要是查看sql执行的计划的type属性。</p>
+
+<h3 id="2-varchar和char的区别">2、varchar和char的区别</h3>
+
+<p>varchar是变长的，char是定长的，这里指的是字符串数。char类型的数据在长度不够是会使用空格补充，会浪费空间，但因为长度固定，所以char的存储速度比varchar快，char最多能放255个字符和编码方式无关。varchar是变长的，如果长度小于定义的长度，会按照实际长度存储，相比char更节省空间。但是因为是变长的，所以存取的速度 比char要慢。varchar在存储方面，若列的长度小于等于255字节，那需要额外一个字节来记录真实数据长度，若长度大于255，则需要两个字节记录真实数据的长度。</p>
+
+<h3 id="3-mysql中datetime和timestamp的类型的区别">3、mysql中datetime和timestamp的类型的区别</h3>
+
+<ol>
+<li><p>datetime占用8个字节，timestamp占用4个字节</p></li>
+
+<li><p>datetime最大可以表示到9999年，timestamp最大可以表示到2038年</p></li>
+</ol>
+
+<h3 id="4-聚集索引与非聚集索引">4、聚集索引与非聚集索引</h3>
+
+<ol>
+<li><p>聚集索引就是索引与表数据存储在一起，聚集索引的叶子节点存储的是整行数据，聚集所以一张表只有一个。</p></li>
+
+<li><p>非聚集索引就是索引与表数据不存储在一起，非聚集索引的叶子节点存储的是列值和主键。一张表可以有多个。</p></li>
+</ol>
+
+<h3 id="5-线上cpu暴涨如何排查">5、线上CPU暴涨如何排查</h3>
+
+<ol>
+<li><p>通过top命令确认cpu的占用情况</p></li>
+
+<li><p>通过show processlist来查看mysql的线程运行情况</p></li>
+
+<li><p>通过 show open tables where in_use &gt; 0  查看表锁情况。</p></li>
+
+<li><p>通过mysql的error_log查看是否有错误</p></li>
+
+<li><p>通过 SHOW ENGINE INNODB STATUS 查看是否有死锁</p></li>
+
+<li><p>通过慢查询日志，检查是否有慢查询。</p></li>
+
+<li><p>通过iostat来查看磁盘IO情况</p></li>
+</ol>
+
+<p>iostat命令安装 yum install sysstat</p>
+
+<h3 id="6-尽量使用not-null">6、尽量使用not null</h3>
+
+<ol>
+<li><p>null值在mysql中占用时间，而空值不占用空间</p></li>
+
+<li><p>对于字段运行为null的时候，判断条件为is null 或者is not null</p></li>
+
+<li><p>count（字段）不统计null值得列</p></li>
+
+<li><p>null值比任何值都小，从小到大排序时，null值排在最前面</p></li>
+</ol>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>MySQL常见问题解决 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL常见问题解决"/>
+<meta name="twitter:description" content="1、mysql跳过域名解析（可解决mysql连接慢的问题） 在配置文件中加入如下，并重启 mysql
+[mysqld] skip-name-resolve  解释：
+skip-name-resolve：跳过域名解析
+2、常用配置 [client] default-character-set=utf8 [mysql] default-character-set=utf8 [mysqld] init_connect=&#39;SET collation_connection = utf8_unicode_ci&#39; init_connect=&#39;SET NAMES utf8&#39; character-set-server=utf8 collation-server=utf8_unicode_ci skip-character-set-client-handshake skip-name-resolve  3、mysql开启root用户远程访问 #执行sql语句（两条） grant all privileges on *.* to &#39;root&#39;@&#39;%&#39; identified by &#39;root&#39; with grant option; flush privileges;  4、Mysql的通信方式 4.1、TCP/IP网络通信 通过-h指定mysql服务的ip地址，通过-P指定mysql服务监听的端口
+win和linux都可以
+例如：
+#服务端启动 mysqld -P3307 --user=root #客户端启动 mysql -P3307 -uroot -p  4.2、命名管道通信 通过参数使mysql服务器和客户端同时使用命名管道通信。
+只适用于win系统
+#服务端启动 mysqld --enable-named-pipe #客户端启动 mysql --pipe -uroot -p  4."/>
+
+    <meta property="og:title" content="MySQL常见问题解决" />
+<meta property="og:description" content="1、mysql跳过域名解析（可解决mysql连接慢的问题） 在配置文件中加入如下，并重启 mysql
+[mysqld] skip-name-resolve  解释：
+skip-name-resolve：跳过域名解析
+2、常用配置 [client] default-character-set=utf8 [mysql] default-character-set=utf8 [mysqld] init_connect=&#39;SET collation_connection = utf8_unicode_ci&#39; init_connect=&#39;SET NAMES utf8&#39; character-set-server=utf8 collation-server=utf8_unicode_ci skip-character-set-client-handshake skip-name-resolve  3、mysql开启root用户远程访问 #执行sql语句（两条） grant all privileges on *.* to &#39;root&#39;@&#39;%&#39; identified by &#39;root&#39; with grant option; flush privileges;  4、Mysql的通信方式 4.1、TCP/IP网络通信 通过-h指定mysql服务的ip地址，通过-P指定mysql服务监听的端口
+win和linux都可以
+例如：
+#服务端启动 mysqld -P3307 --user=root #客户端启动 mysql -P3307 -uroot -p  4.2、命名管道通信 通过参数使mysql服务器和客户端同时使用命名管道通信。
+只适用于win系统
+#服务端启动 mysqld --enable-named-pipe #客户端启动 mysql --pipe -uroot -p  4." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/mysql/mysql%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" />
+<meta property="article:published_time" content="2023-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2023-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">MySQL常见问题解决</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/mysql/">Mysql</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h2 id="1-mysql跳过域名解析-可解决mysql连接慢的问题">1、mysql跳过域名解析（可解决mysql连接慢的问题）</h2>
+
+<p>在配置文件中加入如下，并重启 mysql</p>
+
+<pre><code class="language-bash">[mysqld] 
+skip-name-resolve 
+</code></pre>
+
+<p>解释：</p>
+
+<p>skip-name-resolve：跳过域名解析</p>
+
+<h2 id="2-常用配置">2、常用配置</h2>
+
+<pre><code class="language-shell">[client] 
+default-character-set=utf8 
+
+[mysql] 
+default-character-set=utf8 
+
+[mysqld] 
+init_connect='SET collation_connection = utf8_unicode_ci' 
+init_connect='SET NAMES utf8' 
+character-set-server=utf8 
+collation-server=utf8_unicode_ci 
+skip-character-set-client-handshake 
+skip-name-resolve
+</code></pre>
+
+<h2 id="3-mysql开启root用户远程访问">3、mysql开启root用户远程访问</h2>
+
+<pre><code class="language-sql">#执行sql语句（两条）
+grant all privileges on *.* to 'root'@'%' identified by 'root' with grant option;
+
+flush privileges;
+</code></pre>
+
+<h2 id="4-mysql的通信方式">4、Mysql的通信方式</h2>
+
+<h3 id="4-1-tcp-ip网络通信">4.1、TCP/IP网络通信</h3>
+
+<p>通过-h指定mysql服务的ip地址，通过-P指定mysql服务监听的端口</p>
+
+<p>win和linux都可以</p>
+
+<p>例如：</p>
+
+<pre><code class="language-shell">#服务端启动
+mysqld -P3307 --user=root
+#客户端启动
+mysql -P3307 -uroot -p
+</code></pre>
+
+<h3 id="4-2-命名管道通信">4.2、命名管道通信</h3>
+
+<p>通过参数使mysql服务器和客户端同时使用命名管道通信。</p>
+
+<p>只适用于win系统</p>
+
+<pre><code class="language-shell">#服务端启动
+mysqld --enable-named-pipe
+#客户端启动
+mysql --pipe -uroot -p
+</code></pre>
+
+<h3 id="4-3-共享内存通信">4.3、共享内存通信</h3>
+
+<p>通过参数使用mysql服务器和客户端同时使用共享内存通信</p>
+
+<p>只适用于win系统</p>
+
+<p>通信的服务器和客户端必须位于同一台win主机</p>
+
+<pre><code class="language-shell">#服务端启动
+mysqld --enable-named-pipe
+#客户端启动
+mysql --pipe
+</code></pre>
+
+<h3 id="4-4-linux套接字文件">4.4、linux套接字文件</h3>
+
+<p>客户端和服务之间通过套接字文件进行通信。</p>
+
+<p>客户端与服务都运行在同一台服务器上。</p>
+
+<p>如果客户端启动时指定的主机名为localhost，那么客户端与服务器直接的就是通过套接字进行通信的。</p>
+
+<pre><code class="language-shell">#服务端启动-可以自己指定一个socket文件
+mysqld --socket=/tmp/a.txt --user=root
+#客户端启动
+mysql -hlocalhost -uroot --socket=/tmp/a.txt -p
+</code></pre>
+
+<h2 id="5-mysql调控按钮-启动选项和系统变量">5、mysql调控按钮——启动选项和系统变量</h2>
+
+<h3 id="5-1-简介">5.1、简介</h3>
+
+<p>调控与配置mysql的两种方式：</p>
+
+<ol>
+<li><p>通过设置启动选项</p>
+
+<ol>
+<li><p>通过命令行模式添加启动项    mysqld &ndash;default-storage-engine=MyISAM</p></li>
+
+<li><p>通过配置文件添加启动项</p></li>
+</ol></li>
+
+<li><p>通过修改mysql系统变量</p>
+
+<ol>
+<li><p>全局的系统变量，将会影响这个mysql服务</p></li>
+
+<li><p>局部的系统变量，session（local）层级的，只能影响某个客户端连接的操作。</p></li>
+</ol></li>
+</ol>
+
+<h3 id="5-2-mysql配置文件路径">5.2、mysql配置文件路径</h3>
+
+<ol>
+<li>windows配置文件路径</li>
+</ol>
+
+<p>在<code>Windows</code>操作系统中，<code>MySQL</code>会按照下列路径来寻找配置文件：</p>
+
+<table>
+<thead>
+<tr>
+<th>路径名</th>
+<th>备注</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>%WINDIR%\my.ini%WINDIR%\my.cnf</td>
+<td></td>
+</tr>
+
+<tr>
+<td>C:\my.iniC:\my.cnf</td>
+<td></td>
+</tr>
+
+<tr>
+<td>BASEDIR\my.iniBASEDIR\my.cnf</td>
+<td></td>
+</tr>
+
+<tr>
+<td>defaults-extra-file</td>
+<td>命令行指定的额外配置文件路径</td>
+</tr>
+
+<tr>
+<td>%APPDATA%\MySQL.mylogin.cnf</td>
+<td>登录路径选项（仅限客户端）</td>
+</tr>
+</tbody>
+</table>
+
+<ol>
+<li>linux配置文件路径</li>
+</ol>
+
+<p>在类<code>UNIX</code>操作系统中，<code>MySQL</code>会按照下列路径来寻找配置文件：</p>
+
+<table>
+<thead>
+<tr>
+<th>路径名</th>
+<th>备注</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>/etc/my.cnf</td>
+<td></td>
+</tr>
+
+<tr>
+<td>/etc/mysql/my.cnf</td>
+<td></td>
+</tr>
+
+<tr>
+<td>SYSCONFDIR/my.cnf</td>
+<td></td>
+</tr>
+
+<tr>
+<td>$MYSQL_HOME/my.cnf</td>
+<td>特定于服务器的选项（仅限服务器）</td>
+</tr>
+
+<tr>
+<td>defaults-extra-file</td>
+<td>命令行指定的额外配置文件路径</td>
+</tr>
+
+<tr>
+<td>~/.my.cnf</td>
+<td>用户特定选项</td>
+</tr>
+
+<tr>
+<td>~/.mylogin.cnf</td>
+<td>用户特定的登录路径选项（仅限客户端）</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="5-3-配置文件优先级">5.3、配置文件优先级</h3>
+
+<p>多个配置文件配置相同的启动项，以最后一个配置文件为准。</p>
+
+<h3 id="5-4-同一个配置文件中多个组的优先级">5.4、同一个配置文件中多个组的优先级</h3>
+
+<p>已出现在最后一个组的启动项为准。</p>
+
+<h3 id="5-5-配置文件的内容">5.5、配置文件的内容</h3>
+
+<p>与在命令行中指定启动选项不同的是，配置文件中的启动选项被划分为若干个组，每个组有一个组名，用中括号<code>[]</code>扩起来，像这样：</p>
+
+<pre><code class="language-text">[server]
+(具体的启动选项...)
+
+[mysqld]
+(具体的启动选项...)
+
+[mysqld_safe]
+(具体的启动选项...)
+
+[client]
+(具体的启动选项...)
+
+[mysql]
+(具体的启动选项...)
+
+[mysqladmin]
+(具体的启动选项...)
+
+</code></pre>
+
+<p>像这个配置文件里就定义了许多个组，组名分别是<code>server</code>、<code>mysqld</code>、<code>mysqld_safe</code>、<code>client</code>、<code>mysql</code>、<code>mysqladmin</code>。每个组下边可以定义若干个启动选项。</p>
+
+<p>配置文件中不同的选项组是给不同的启动命令使用的，如果选项组名称与程序名称相同，则组中的选项将专门应用于该程序。例如， <code>[mysqld]</code>和<code>[mysql]</code>组分别应用于<code>mysqld</code>服务器程序和<code>mysql</code>客户端程序。不过有两个选项组比较特别：</p>
+
+<ul>
+<li><p><code>[server]</code>组下边的启动选项将作用于所有的服务器程序。</p></li>
+
+<li><p><code>[client]</code>组下边的启动选项将作用于所有的客户端程序。</p></li>
+</ul>
+
+<p>需要注意的一点是，<code>mysqld_safe</code>和<code>mysql.server</code>这两个程序在启动时都会读取<code>[mysqld]</code>选项组中的内容。为了直观感受一下，我们挑一些启动命令来看一下它们能读取的选项组都有哪些：</p>
+
+<table>
+<thead>
+<tr>
+<th>启动命令</th>
+<th>类别</th>
+<th>能读取的组</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>mysqld</td>
+<td>启动服务器</td>
+<td>[mysqld][server]</td>
+</tr>
+
+<tr>
+<td>mysqld_safe</td>
+<td>启动服务器</td>
+<td>[mysqld][server][mysqld_safe]</td>
+</tr>
+
+<tr>
+<td>mysql.server</td>
+<td>启动服务器</td>
+<td>[mysqld][server][mysql.server]</td>
+</tr>
+
+<tr>
+<td>mysql</td>
+<td>启动客户端</td>
+<td>[mysql][client]</td>
+</tr>
+
+<tr>
+<td>mysqladmin</td>
+<td>启动客户端</td>
+<td>[mysqladmin][client]</td>
+</tr>
+
+<tr>
+<td>mysqldump</td>
+<td>启动客户端</td>
+<td>[mysqldump][client]</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="5-6-特定mysql版本的专用选项组">5.6、特定MySQL版本的专用选项组</h3>
+
+<pre><code>   我们可以在选项组的名称后加上特定的`MySQL`版本号，比如对于`[mysqld]`选项组来说，我们可以定义一个`[mysqld-5.7]`的选项组，它的含义和`[mysqld]`一样，只不过只有版本号为`5.7`的`mysqld`程序才能使用这个选项组中的选项。
+</code></pre>
+
+<h2 id="6-系统变量">6、系统变量</h2>
+
+<h3 id="6-1-查看系统系统变量">6.1、查看系统系统变量</h3>
+
+<pre><code class="language-sql">SHOW VARIABLES [LIKE 匹配的模式];
+例如：SHOW VARIABLES LIKE 'default_storage_engine';
+</code></pre>
+
+<h3 id="6-2-设置系统变量">6.2、设置系统变量</h3>
+
+<ol>
+<li>通过命令行添加启动项选项、</li>
+</ol>
+
+<pre><code class="language-text">mysqld --default-storage-engine=MyISAM --max-connections=10
+</code></pre>
+
+<ol>
+<li>通过配置设置系统变量</li>
+</ol>
+
+<pre><code class="language-text">[server]
+default-storage-engine=MyISAM
+max-connections=10
+</code></pre>
+
+<h3 id="6-3-系统变量可以在服务器运行中设置">6.3、系统变量可以在服务器运行中设置</h3>
+
+<p>对于大部分的系统变量来说，可以在服务器运行中修改设置。</p>
+
+<pre><code class="language-text">#如果不加[GLOBAL|SESSION]，默认修改的session级别的系统变量
+SET [GLOBAL|SESSION] 系统变量名 = 值;
+或
+SET [@@(GLOBAL|SESSION).]var_name = XXX;
+</code></pre>
+
+<h3 id="6-4-服务器为每个客户端维护一组会话变量">6.4、服务器为每个客户端维护一组会话变量</h3>
+
+<pre><code>   在服务器启动时，会将每个全局变量初始化为其默认值（可以通过命令行或选项文件中指定的选项更改这些默认值）。然后服务器还为每个连接的客户端维护一组会话变量，客户端的会话变量在连接时使用相应全局变量的当前值初始化。
+
+   **小贴士： 如果某个客户端改变了某个系统变量在`GLOBAL`作用范围的值，并不会影响该系统变量在当前已经连接的客户端作用范围为`SESSION`的值，只会影响后续连入的客户端在作用范围为`SESSION`的值。**
+</code></pre>
+
+<h2 id="7-mysql字符集合比较规则">7、mysql字符集合比较规则</h2>
+
+<h3 id="7-1-mysql中的utf8和utf8mb4">7.1、mysql中的utf8和utf8mb4</h3>
+
+<p>正常utf8字符集表示一个字符需要使用1~4个字节，但我们常用的字符使用1~3个字符就可以表示了。而在mysql中字符集表示一个字符所用最大字节长度在某些方面会影响系统的存储和性能，所以设计mysql的大叔偷偷的定义了两个概念：</p>
+
+<ul>
+<li><p><code>utf8mb3</code>：阉割过的<code>utf8</code>字符集，只使用1～3个字节表示字符。</p></li>
+
+<li><p><code>utf8mb4</code>：正宗的<code>utf8</code>字符集，使用1～4个字节表示字符。</p></li>
+</ul>
+
+<p>有一点需要大家十分的注意，在<code>MySQL</code>中<code>utf8</code>是<code>utf8mb3</code>的别名，所以之后在<code>MySQL</code>中提到<code>utf8</code>就意味着使用1~3个字节来表示一个字符，如果大家有使用4字节编码一个字符的情况，比如存储一些emoji表情啥的，那请使用<code>utf8mb4</code>。</p>
+
+<h3 id="7-2-mysql中的字符集合比较规则">7.2、mysql中的字符集合比较规则</h3>
+
+<p>mysql中有4个级别的字符集和比较规则，分别是：</p>
+
+<ul>
+<li><p>服务器级别</p></li>
+
+<li><p>数据库级别</p></li>
+
+<li><p>表级别</p></li>
+
+<li><p>列级别</p></li>
+</ul>
+
+<p>MySQL中每种字符集都有默认的比较规则。</p>
+
+<h3 id="7-3-mysql中的字符集转换">7.3、mysql中的字符集转换</h3>
+
+<p>mysql在数据交互的过程中涉及多次的字符集的转换，在这个过程中会用到三个系统变量。</p>
+
+<table>
+<thead>
+<tr>
+<th>系统变量</th>
+<th>描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>character_set_client</td>
+<td>指示服务器如何解码客户端</td>
+</tr>
+
+<tr>
+<td>character_set_connection</td>
+<td>服务器处理请求是会把请求字符串从character_set_client转换为character_set_connection</td>
+</tr>
+
+<tr>
+<td>character_set_results</td>
+<td>服务器向客户端返回数据是使用的字符集</td>
+</tr>
+</tbody>
+</table>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306222120571.png" alt="" /></p>
+
+<h3 id="7-4-mysql中出现乱码的原因">7.4、mysql中出现乱码的原因</h3>
+
+<ol>
+<li><p>mysql服务器认为客户端将会使用character_set_client变量指明的字符集发送请求，若客户端使用的字符集不是character_set_client，那必将出现编码混乱。</p></li>
+
+<li><p>服务器将会使用character_set_results变量指明的字符集将请求结果发送给客户端，若客户端不使用character_set_results编码的话，将会出现请求结果的编码混乱。</p></li>
+
+<li><p>character_set_connection编码只是服务器在将请求的字节串从character_set_client转换为character_set_connection使用，没有其他重要的作用，但一定要注意，该字符集包含的字符一定要涵盖请求中的字符，要不然会导致某些字符无法成功从character_set_client转换为character_set_connection，从而导致编码混乱。</p></li>
+</ol>
+
+<p>通常将<strong><em>character_set_client</em></strong> 、<strong><em>character_set_connection</em></strong>、<strong><em>character_set_results</em></strong>这三个变量设置为一致的情况，这样可以减少无畏的字符集转换<strong><em>。</em></strong></p>
+
+<pre><code class="language-sql">#设置mysql中的字符集编码
+SET character_set_client = 字符集名;
+SET character_set_connection = 字符集名;
+SET character_set_results = 字符集名;
+#设置这三个字符集编码为同一个，且同时设置
+SET NAMES 字符集名;
+</code></pre>
+
+<h3 id="7-5-比较规则">7.5、比较规则</h3>
+
+<p>比较规则也称排序规则。</p>
+
+<p>比较规则的作用通常体现比较字符串大小的表达式以及对某个字符串列进行排序中-&gt;group by</p>
+
+<h2 id="8-innodb存储引擎">8、InnoDB存储引擎</h2>
+
+<h3 id="8-1-innodb页介绍">8.1、InnoDB页介绍</h3>
+
+<p>InnoDB将一条条记录存储磁盘上，InnoDB会将数据分为若干页，InnoDB以页作为磁盘和内存之间交互的基本单位。InnoDB中页的大小一般为16KB。在一般情况下，一次最少从磁盘中读取16KB的内容到内存中，一次最少把内存中的16KB内容刷新到磁盘中。</p>
+
+<h3 id="8-2-innodb行格式">8.2、InnoDB行格式</h3>
+
+<p>我们平时是以记录为单位来向表中插入数据的，这些记录在磁盘上的存放方式也被称为行格式。InnoDB到目前为止有4种不同类型行格式，分别为：</p>
+
+<ul>
+<li><p>Compact</p></li>
+
+<li><p>Redundant</p></li>
+
+<li><p>Dynamic</p></li>
+
+<li><p>Compressed</p></li>
+</ul>
+
+<p>在创建和修改表的时候可以指定行格式</p>
+
+<pre><code class="language-sql">CREATE TABLE 表名 (列的信息) ROW_FORMAT=行格式名称
+    
+ALTER TABLE 表名 ROW_FORMAT=行格式名称
+</code></pre>
+
+<h3 id="8-2-compact行格式">8.2、Compact行格式</h3>
+
+<p>一条完整记录 = 记录的额外信息 + 记录的真实数据</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306222120620.png" alt="" /></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

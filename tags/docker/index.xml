@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 果汁康</title>
+    <link>https://fruitkang.github.io/tags/docker/</link>
+    <description>Recent content in Docker on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>docker常用命令</title>
+      <link>https://fruitkang.github.io/docker/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/docker/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+      <description> 1、启动一个实例 docker run -p 3306:3306 --name mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7 --------------------------------------- 参数说明-p 3306:3306：将容器的 3306 端口映射到主机的 3306 端口 -v /mydata/mysql/conf:/etc/mysql：将配置文件夹挂载到主机 -v /mydata/mysql/log:/var/log/mysql：将日志文件夹挂载到主机 -v /mydata/mysql/data:/var/lib/mysql/：将配置文件夹挂载到主机 -e MYSQL_ROOT_PASSWORD=root：初始化 root 用户的密码  2、进入容器内文件系统 #mysql为容器名 docker exec -it mysql /bin/bash  3、常用命令 #查看正在运行的docker容器 docker ps #查看所有的docker容器 docker ps -a #设置docker容器每次都是自动启动 docker update redis --restart=always  </description>
+    </item>
+    
+  </channel>
+</rss>

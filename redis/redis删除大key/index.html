@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Redis删除大Key // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis删除大Key"/>
+<meta name="twitter:description" content="0、redis中的大Key    大Key 解释     hash 映射表   set 集合   zset 有序集合   list 列表    1、问题 线上出现Redis大Key该如何删除？
+1、低峰期删除  在业务的低峰期删除大Key，例如凌晨4点的时候去删除大Key，虽然这依旧会导致阻塞问题，但是影响比较小，适用于QPS小的业务。
+ 2、分批删除法    大Key 分批删除方法       hash 使用hscan分批删除 hscan命令用来迭代hash表中键值对，然后通过hdel命令逐个删除每个键值对    set 使用Srandmember命令分批删除 Srandmember 命令用于返回集合中的一个或多个随机元素，然后使用Srem命令删除元素    zset 使用Zremrangebyrank 命令分批删除 Zremrangebyrank 命令用于移除有序集中，指定排名(rank)区间内的所有成员。    list 使用Lpop或Rpop命令逐个删除 Lpop 命令用于移除并返回列表的第一个元素。Rpop 命令用于移除并返回列表的最后一个元素。     3、异步删除 Redis4."/>
+
+    <meta property="og:title" content="Redis删除大Key" />
+<meta property="og:description" content="0、redis中的大Key    大Key 解释     hash 映射表   set 集合   zset 有序集合   list 列表    1、问题 线上出现Redis大Key该如何删除？
+1、低峰期删除  在业务的低峰期删除大Key，例如凌晨4点的时候去删除大Key，虽然这依旧会导致阻塞问题，但是影响比较小，适用于QPS小的业务。
+ 2、分批删除法    大Key 分批删除方法       hash 使用hscan分批删除 hscan命令用来迭代hash表中键值对，然后通过hdel命令逐个删除每个键值对    set 使用Srandmember命令分批删除 Srandmember 命令用于返回集合中的一个或多个随机元素，然后使用Srem命令删除元素    zset 使用Zremrangebyrank 命令分批删除 Zremrangebyrank 命令用于移除有序集中，指定排名(rank)区间内的所有成员。    list 使用Lpop或Rpop命令逐个删除 Lpop 命令用于移除并返回列表的第一个元素。Rpop 命令用于移除并返回列表的最后一个元素。     3、异步删除 Redis4." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/redis/redis%E5%88%A0%E9%99%A4%E5%A4%A7key/" />
+<meta property="article:published_time" content="2022-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2022-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Redis删除大Key</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/redis/">Redis</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="0-redis中的大key">0、redis中的大Key</h1>
+
+<table>
+<thead>
+<tr>
+<th>大Key</th>
+<th>解释</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>hash</td>
+<td>映射表</td>
+</tr>
+
+<tr>
+<td>set</td>
+<td>集合</td>
+</tr>
+
+<tr>
+<td>zset</td>
+<td>有序集合</td>
+</tr>
+
+<tr>
+<td>list</td>
+<td>列表</td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="1-问题">1、问题</h1>
+
+<p>线上出现Redis大Key该如何删除？</p>
+
+<h2 id="1-低峰期删除">1、低峰期删除</h2>
+
+<blockquote>
+<p>在业务的低峰期删除大Key，例如凌晨4点的时候去删除大Key，虽然这依旧会导致阻塞问题，但是影响比较小，适用于QPS小的业务。</p>
+</blockquote>
+
+<h2 id="2-分批删除法">2、分批删除法</h2>
+
+<table>
+<thead>
+<tr>
+<th>大Key</th>
+<th>分批删除方法</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>hash</td>
+<td>使用hscan分批删除</td>
+<td>hscan命令用来迭代hash表中键值对，然后通过hdel命令逐个删除每个键值对</td>
+<td></td>
+</tr>
+
+<tr>
+<td>set</td>
+<td>使用Srandmember命令分批删除</td>
+<td>Srandmember 命令用于返回集合中的一个或多个随机元素，然后使用Srem命令删除元素</td>
+<td></td>
+</tr>
+
+<tr>
+<td>zset</td>
+<td>使用Zremrangebyrank 命令分批删除</td>
+<td>Zremrangebyrank 命令用于移除有序集中，指定排名(rank)区间内的所有成员。</td>
+<td></td>
+</tr>
+
+<tr>
+<td>list</td>
+<td>使用Lpop或Rpop命令逐个删除</td>
+<td>Lpop 命令用于移除并返回列表的第一个元素。Rpop 命令用于移除并返回列表的最后一个元素。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="3-异步删除">3、异步删除</h2>
+
+<p>Redis4.0出了一个异步线程</p>
+
+<p>Redis UNLINK 命令类似与 del 命令，表示删除指定的 key，如果指定 key 不存在，命令则忽略；但是 UNLINK 命令不同与 DEL 命令在于它是<strong>异步执行的</strong>，因此它不会阻塞。UNLINK 命令是非阻塞删除，非阻塞删除简言之，就是将删除操作放到另外一个线程（而非 Redis 主线程）去处理。</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

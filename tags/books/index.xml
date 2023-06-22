@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Books on 果汁康</title>
+    <link>https://fruitkang.github.io/tags/books/</link>
+    <description>Recent content in Books on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tags/books/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go书籍推荐</title>
+      <link>https://fruitkang.github.io/books/go%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/books/go%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</guid>
+      <description> 0、简介   深入理解Linux网络 网络是怎样连接的   1、个人声明 这里推荐的书籍本人都进行过阅读，一家之言，如有冒犯，概不负责2、推荐 2.1、Go专家编程  学习Go基础可以看此书，对一些概念解释的挺清晰，例如比较核心的协程哪一块
+ 2.2、Go Web编程  Go语言Web网站搭建可以看此书，介绍了web开发中常用技术的Go方法，例如socket，以及框架Beego和Gorm
+ </description>
+    </item>
+    
+    <item>
+      <title>Java书籍推荐</title>
+      <link>https://fruitkang.github.io/books/java%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/books/java%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</guid>
+      <description> 0、简介   深入理解Java虚拟机 Java编程思想   1、个人声明 这里推荐的书籍本人都进行过阅读，一家之言，如有冒犯，概不负责2、推荐  没有理由，经典必读
+没有理由，经典必读
+ </description>
+    </item>
+    
+    <item>
+      <title>MySQL书籍推荐</title>
+      <link>https://fruitkang.github.io/books/mysql%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/books/mysql%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</guid>
+      <description> 0、简介   MySQL技术内幕 MySQL是怎样运行的 高性能MySQL   1、个人声明 这里推荐的书籍本人都进行过阅读，一家之言，如有冒犯，概不负责2、推荐 2.1、MySQL技术内幕   本书主要从基础知识点的方面介绍MySQL知识。主要包括日志文件、行记录格式、索引、算法、索引、事务、锁、MVCC等基础知识。文章讲述较为通俗易懂。
+  2.2、MySQL是怎样运行的   本书讲述内容与《MySQL技术内幕》差不多，但叙述的风格是不同的，而且本书最后添加了关于面试中的一些问题也是值得一看的。
+ 新增面试章节
+ 2.3、高性能MySQL   本书与上面两本书不同，这本书从更高的角度介绍了mysql，主要包括Mysql架构、Mysql服务优化、创建高性能索引的方式、优化查询性能、Mysql主从复制、Mysql备份与恢复。
+通过这本书可以帮我们更高层度的了解Mysql
+  </description>
+    </item>
+    
+    <item>
+      <title>Redis书籍推荐</title>
+      <link>https://fruitkang.github.io/books/redis%E6%95%B0%E6%8D%AE%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/books/redis%E6%95%B0%E6%8D%AE%E6%8E%A8%E8%8D%90/</guid>
+      <description> 0、简介   Redis设计与实现   1、个人声明 这里推荐的书籍本人都进行过阅读，一家之言，如有冒犯，概不负责2、推荐 2.1、Redis设计与实现   此书从从底层数据结构到架构设计、实现原理、工作机制多方面介绍了Redis，非常详细细致。
+我Redis大多数文字都是学习此书时候的笔记，同志们可以配置我的笔记学习。
+  </description>
+    </item>
+    
+    <item>
+      <title>网络书籍推荐</title>
+      <link>https://fruitkang.github.io/books/%E7%BD%91%E7%BB%9C%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/books/%E7%BD%91%E7%BB%9C%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/</guid>
+      <description> 0、简介   深入理解Linux网络 网络是怎样连接的   1、个人声明 这里推荐的书籍本人都进行过阅读，一家之言，如有冒犯，概不负责2、推荐 2.1、深入理解Linux网络   本书从问题出发，帮助我们解决了工作中的许多困惑，个人认为对我们程序员来说非常重要。
+例如下面的问题在本书中都能得到答案
+  2.2、网络是怎样连接的   这本书非常的简单易懂，介绍了当我们从浏览器输入一个地址到服务器给我们一个响应的整个过程。
+  </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Redis简单动态字符串 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis简单动态字符串"/>
+<meta name="twitter:description" content="一、简介  简单动态字符串简称为SDS，是Redis中的一种数据结构，作用就是为了表示字符串。
+ 二、问题  我们知道Redis是由C语言编写的，那为何Redis不使用C语言中传统的字符串表示，而是重新定义了一个简单动态字符串的结构来表示字符串呢？
+ 三、简单动态字符串 3.1、简单动态字符串的定义 struct sdshdr{ //记录buf字符数组中已经使用的字符的数量 int len; //记录buf数组中未使用的字符的数量 int free; //字符数组，用来保存字符串 char buf[]; }  3.2、简单动态字符串的结构图 3.3、细节解释  free属性的值为0，代表该SDS没有分配任何未使用空间。
+ len属性的值代表的值不包括字符串结尾的字符 ‘\0’ 。
+ 在SDS中遵守了C语言中以 ‘\0’ 为字符串结尾的惯例。遵守这一规定的好处就是直接重用C字符串的一部分函数。
+  3.4、C语言字符串与简单动态字符串的区别    C字符串 SDS简单动态字符串     获取字符串长度时间复杂度为O(N) 获取字符串长度时间复杂度为O(1)   API不安全，可能导致缓冲区溢出 API安全，不会导致缓冲区溢出   修改字符串N，必然需要重分配内存N次 修改字符串N次，最多需要分配N次内存   只能保存文本数据 可以保存文本，二进制   可以使用全部库中的函数 可以使用部分库中的函数    1、SDS常数复杂度获取字符串长度  因为C语言字符串不记录本身的长度信息，所以要获取C字符串长度，就必须遍历整个C字符串，这个操作的复杂为O(n)。但是简单动态字符本身使用len属性记录其长度，所以获取一个SDS长度的复杂度为O(1)。"/>
+
+    <meta property="og:title" content="Redis简单动态字符串" />
+<meta property="og:description" content="一、简介  简单动态字符串简称为SDS，是Redis中的一种数据结构，作用就是为了表示字符串。
+ 二、问题  我们知道Redis是由C语言编写的，那为何Redis不使用C语言中传统的字符串表示，而是重新定义了一个简单动态字符串的结构来表示字符串呢？
+ 三、简单动态字符串 3.1、简单动态字符串的定义 struct sdshdr{ //记录buf字符数组中已经使用的字符的数量 int len; //记录buf数组中未使用的字符的数量 int free; //字符数组，用来保存字符串 char buf[]; }  3.2、简单动态字符串的结构图 3.3、细节解释  free属性的值为0，代表该SDS没有分配任何未使用空间。
+ len属性的值代表的值不包括字符串结尾的字符 ‘\0’ 。
+ 在SDS中遵守了C语言中以 ‘\0’ 为字符串结尾的惯例。遵守这一规定的好处就是直接重用C字符串的一部分函数。
+  3.4、C语言字符串与简单动态字符串的区别    C字符串 SDS简单动态字符串     获取字符串长度时间复杂度为O(N) 获取字符串长度时间复杂度为O(1)   API不安全，可能导致缓冲区溢出 API安全，不会导致缓冲区溢出   修改字符串N，必然需要重分配内存N次 修改字符串N次，最多需要分配N次内存   只能保存文本数据 可以保存文本，二进制   可以使用全部库中的函数 可以使用部分库中的函数    1、SDS常数复杂度获取字符串长度  因为C语言字符串不记录本身的长度信息，所以要获取C字符串长度，就必须遍历整个C字符串，这个操作的复杂为O(n)。但是简单动态字符本身使用len属性记录其长度，所以获取一个SDS长度的复杂度为O(1)。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/redis/redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2/" />
+<meta property="article:published_time" content="2022-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2022-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Redis简单动态字符串</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/redis/">Redis</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="一-简介">一、简介</h1>
+
+<blockquote>
+<p>简单动态字符串简称为SDS，是Redis中的一种数据结构，作用就是为了表示字符串。</p>
+</blockquote>
+
+<h1 id="二-问题">二、问题</h1>
+
+<blockquote>
+<p>我们知道Redis是由C语言编写的，那为何Redis不使用C语言中传统的字符串表示，而是重新定义了一个简单动态字符串的结构来表示字符串呢？</p>
+</blockquote>
+
+<h1 id="三-简单动态字符串">三、简单动态字符串</h1>
+
+<h2 id="3-1-简单动态字符串的定义">3.1、简单动态字符串的定义</h2>
+
+<pre><code class="language-c">struct sdshdr{
+
+  //记录buf字符数组中已经使用的字符的数量
+
+  int len;
+
+  //记录buf数组中未使用的字符的数量
+
+  int free;
+
+  //字符数组，用来保存字符串
+
+  char buf[];
+
+}
+</code></pre>
+
+<h2 id="3-2-简单动态字符串的结构图">3.2、简单动态字符串的结构图</h2>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211738884.jpg" alt="img" /></p>
+
+<h2 id="3-3-细节解释">3.3、细节解释</h2>
+
+<ul>
+<li><p>free属性的值为0，代表该SDS没有分配任何未使用空间。</p></li>
+
+<li><p>len属性的值代表的值不包括字符串结尾的字符 ‘\0’ 。</p></li>
+
+<li><p>在SDS中遵守了C语言中以 ‘\0’ 为字符串结尾的惯例。遵守这一规定的好处就是直接重用C字符串的一部分函数。</p></li>
+</ul>
+
+<h2 id="3-4-c语言字符串与简单动态字符串的区别">3.4、C语言字符串与简单动态字符串的区别</h2>
+
+<table>
+<thead>
+<tr>
+<th>C字符串</th>
+<th>SDS简单动态字符串</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>获取字符串长度时间复杂度为O(N)</td>
+<td>获取字符串长度时间复杂度为O(1)</td>
+</tr>
+
+<tr>
+<td>API不安全，可能导致缓冲区溢出</td>
+<td>API安全，不会导致缓冲区溢出</td>
+</tr>
+
+<tr>
+<td>修改字符串N，必然需要重分配内存N次</td>
+<td>修改字符串N次，最多需要分配N次内存</td>
+</tr>
+
+<tr>
+<td>只能保存文本数据</td>
+<td>可以保存文本，二进制</td>
+</tr>
+
+<tr>
+<td>可以使用全部<string.h>库中的函数</td>
+<td>可以使用部分<string.h>库中的函数</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="1-sds常数复杂度获取字符串长度">1、SDS常数复杂度获取字符串长度</h3>
+
+<blockquote>
+<p>因为C语言字符串不记录本身的长度信息，所以要获取C字符串长度，就必须遍历整个C字符串，这个操作的复杂为O(n)。但是简单动态字符本身使用len属性记录其长度，所以获取一个SDS长度的复杂度为O(1)。</p>
+</blockquote>
+
+<h3 id="2-简单动态字符串能够杜绝缓冲区的溢出">2、简单动态字符串能够杜绝缓冲区的溢出</h3>
+
+<blockquote>
+<p>C语言字符串由于不记录本身长度带来的另一个问题就是容易造成缓冲区溢出。如下举例：</p>
+
+<p>①假设在内存中存在C语言字符串str1和str2，它两的内存关系如图所示。</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211741169.jpg" alt="img" /></p>
+
+<p>②如果一个程序员决定通过执行<strong>strcat（str1,&ldquo;12&rdquo;）</strong>将str1的内容修改为&rdquo;Redis12&rdquo;,但由于该程序员在执行strcat操作的时候没有给str1字符串重新分配足够的空间，所以在此操作完毕之后后str1的数据将溢出到str2中，导致str2的数据被修改。如图所示</p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211741376.jpg" alt="img" /></p>
+
+<p>③修改之后我们发现str1字符串的值为如愿以偿的被修改为&rdquo;Redis12&rdquo;，但是str2的值却变成了&rdquo;2&rdquo;</p>
+
+<p>通过以上例子我们发现C语言字符串在修改字符串的时候由于字符串本身不知道其长度，所以需要我们主动的去重新分配内存，防止内存溢出。但是Redis的简单动态字符串由于有free属性，所以当SDS被修改的时候SDS本身会检查空间是否满足修改所需的要求，若不符合，则自动将非SDS重新分配内存，使其能够满足修改需求。所以SDS能够拒绝发生内存溢出。</p>
+</blockquote>
+
+<h3 id="3-sds能够减少修改字符串时带来的内存重新分配的次数">3、SDS能够减少修改字符串时带来的内存重新分配的次数</h3>
+
+<blockquote>
+<p>因为内存分配涉及复杂的算法，并且可能存在系统调用，所以通常比较费时。</p>
+
+<p>①由于C语言字符串不记录本身的长度，所以每次修改C字符串都需要对C字符串进行一次内存的重新分配。</p>
+
+<p><strong>对C语言字符串进行增长字符操作</strong>，比如拼接操作。在操作之前必须进行内存的重新分配，否则会发生*内存溢出*。</p>
+
+<p><strong>对C语言字符串进行缩短操作</strong>，比如截断操作。在操作之后需要对内存重分配来释放字符串不在使用的空间，如果忘了，会发生内存的泄漏。</p>
+
+<p>②为了避免C字符串的这种缺陷，SDS通过使用未使用空间（也就是free属性）来解决该问题。通过未使用空间SDS实现了空间预分配和惰性空间释放。</p>
+
+<p><strong>在扩展SDS时</strong>，会先检查未使用空间是否做够，若够，则直接使用未使用空间，不用进行内存的分配。</p>
+
+<p><strong>在缩短SDS时</strong>，不会直接将不使用的空间的直接释放，而是将不使用的空间记录到SDS的free属性中，为下次SDS的扩展做准备。当然当我们真正需要这些未使用的空间时，SDS也提供了相应的API使SDS真正释放未使用空间。所以不用担心惰性空间释放造成内存浪费。</p>
+</blockquote>
+
+<h3 id="4-sds存储二进制数据是安全的">4、SDS存储二进制数据是安全的</h3>
+
+<blockquote>
+<p>C语言字符中规定以 &lsquo;\0&rsquo; 为字符串的结束符。在二进制文件中，很有可能存在 \0&rsquo; 这个字符，所以如果使用C语言字符串存储二进制文件时，当遇到字符 &lsquo;\0&rsquo; 将被误认为字符串的结束导致二进制数据不能被完整的保存。所以C字符串只能保存文本数据，而不能保存图片、音频、视频等二进制文件。</p>
+
+<p>但是，在SDS中字符串的结束是通过len属性记录的。通过len数值我们可知知道字符串到那个位置结束。也就是说Redis对存储在buf数组的数据没有任何限制（不像C语言字符，不能再字符串中出现 &lsquo;\0&rsquo; ）。所以数据在写入时是什么样的，读取出来还是什么样子的。所以SDS是二进制安全的。</p>
+</blockquote>
+
+<h3 id="5-sds兼容c语言字符串部分函数">5、SDS兼容C语言字符串部分函数。</h3>
+
+<blockquote>
+<p>由于SDS在遵循了C语言字符以 &lsquo;\0&rsquo; 字符结尾，所以SDS可以使用C字符串的部分函数。</p>
+</blockquote>
+
+<h1 id="四-补充-重点">四、<strong>补充（重点）</strong></h1>
+
+<h2 id="1-sds的空间预分配策略">1、SDS的空间预分配策略</h2>
+
+<blockquote>
+<p>若对SDS修改之后，SDS的长度（也就是len属性的值）小于1MB，那么程序分配和len值相等的未使用空间。</p>
+
+<p>若对SDS修改之后，len的长度大于等于1MB，那么程序就分配1MB的未使用空间。</p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211744719.jpg" alt="img" /></p>
+
+<h2 id="2-sds惰性空间释放">2、SDS惰性空间释放</h2>
+
+<blockquote>
+<p>假设现有一个SDS字符串如图所示：</p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211745655.jpg" alt="img" /></p>
+
+<blockquote>
+<p>现在将字符串的值修改为“123”，如图所示：</p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211745812.jpg" alt="img" /></p>
+
+<p>通过观察我们知道SDS简单动态字符串，在缩短字符串之后并未直接释放内存，而是将释放的内存数量添加到free属性中。惰性释放空间可以避免缩短字符串的时候进行内存分配，并为将来字符串扩展做了准备。</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

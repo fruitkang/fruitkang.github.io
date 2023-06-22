@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on 果汁康</title>
+    <link>https://fruitkang.github.io/tools/</link>
+    <description>Recent content in Tools on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 20 Jun 2022 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>免费工具</title>
+      <link>https://fruitkang.github.io/tools/%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tools/%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7/</guid>
+      <description>常用免费接口
+聚合数据提供30大类,160种以上基础数据API服务,国内最大的基础数据API服务，下面就罗列一些免费的各类API接口。
+   接口 地址     手机号码归属地API接口 https://www.juhe.cn/docs/api/id/11   历史上的今天API接口 https://www.juhe.cn/docs/api/id/63   股票数据API接口 https://www.juhe.cn/docs/api/id/21   全国WIFI接口 https://www.juhe.cn/docs/api/id/18   星座运势接口 https://www.juhe.cn/docs/api/id/58   黄金数据接口 https://www.juhe.cn/docs/api/id/29   语音识别接口 https://www.juhe.cn/docs/api/id/134   周公解梦接口 https://www.juhe.cn/docs/api/id/64   天气预报API接口 https://www.juhe.cn/docs/api/id/73   身份证查询API接口 https://www.juhe.cn/docs/api/id/38   笑话大全API接口 https://www.juhe.cn/docs/api/id/95   邮编查询接口 https://www.juhe.cn/docs/api/id/66   老黄历接口 https://www.juhe.cn/docs/api/id/65   网站安全检测接口 https://www.juhe.cn/docs/api/id/19   手机固话来电显示接口 https://www.juhe.cn/docs/api/id/72   基金财务数据接口 https://www.</description>
+    </item>
+    
+    <item>
+      <title>获取ip的工具类</title>
+      <link>https://fruitkang.github.io/tools/%E8%8E%B7%E5%8F%96ip%E5%B7%A5%E5%85%B7%E7%B1%BB/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tools/%E8%8E%B7%E5%8F%96ip%E5%B7%A5%E5%85%B7%E7%B1%BB/</guid>
+      <description>/** * 获取本机ip * * @return 本机ip列表 */ public static List&amp;lt;String&amp;gt; getIp() { //1、获取本机下的所有网卡 Collection&amp;lt;NetworkInterface&amp;gt; networkInterfaces = NetUtil.getNetworkInterfaces(); if (CollectionUtil.isEmpty(networkInterfaces)) { throw new BaseRuntimeException(&amp;quot;无法获取当前主机下的网卡&amp;quot;); } networkInterfaces = networkInterfaces.stream().filter(networkInterface -&amp;gt; { try { return !networkInterface.isLoopback(); } catch (SocketException e) { throw new BaseRuntimeException(&amp;quot;获取本机ip发生SocketException&amp;quot;, e); } }).collect(Collectors.toList()); List&amp;lt;String&amp;gt; ips = Lists.newArrayList(); networkInterfaces.forEach(networkInterface -&amp;gt; { //获取该网卡下的所有地址 Enumeration&amp;lt;InetAddress&amp;gt; addresses = networkInterface.getInetAddresses(); while (addresses.hasMoreElements()) { InetAddress inetAddress = addresses.nextElement(); //过滤环回地址 if (!inetAddress.isLoopbackAddress()) { if (&amp;quot;127.0.0.1&amp;quot;.equalsIgnoreCase(inetAddress.getHostAddress())) { continue; } if (inetAddress instanceof Inet6Address) { continue; } if (inetAddress instanceof Inet4Address) { ips.</description>
+    </item>
+    
+    <item>
+      <title>递归构建树结构(泛型)</title>
+      <link>https://fruitkang.github.io/tools/%E9%80%92%E5%BD%92%E6%9E%84%E5%BB%BA%E6%A0%91%E7%BB%93%E6%9E%84%E6%B3%9B%E5%9E%8B/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/tools/%E9%80%92%E5%BD%92%E6%9E%84%E5%BB%BA%E6%A0%91%E7%BB%93%E6%9E%84%E6%B3%9B%E5%9E%8B/</guid>
+      <description>/** * @author gzk * @description: 树的工具类 * @since 2022/6/7 */ public class TreeUtil { /** * * Function2&amp;lt;W, List&amp;lt;W&amp;gt;, List&amp;lt;W&amp;gt;&amp;gt; findChildrenFunction，第一个参数为头结点，第二个参数为所有节点，第三个为返回值，子节点 * 组装树 * * @param headNodes 头节点 * @param allNodes 所有节点 * @param findChildrenFunction 寻找子节点的方法， * @param &amp;lt;W&amp;gt; 节点泛型 */ public static &amp;lt;W&amp;gt; List&amp;lt;TreeNode&amp;lt;W&amp;gt;&amp;gt; packTree(List&amp;lt;W&amp;gt; headNodes, List&amp;lt;W&amp;gt; allNodes, Function2&amp;lt;W, List&amp;lt;W&amp;gt;, List&amp;lt;W&amp;gt;&amp;gt; findChildrenFunction) { //参数校验 if (CollectionUtil.isEmpty(headNodes)) { return Collections.emptyList(); } if (CollectionUtil.isEmpty(allNodes) || findChildrenFunction == null) { return headNodes.</description>
+    </item>
+    
+  </channel>
+</rss>

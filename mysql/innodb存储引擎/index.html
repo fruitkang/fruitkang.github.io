@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>MySQL表 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL表"/>
+<meta name="twitter:description" content="1、简介 第一个支持ACID事务的存储引擎，行锁设计、支持MVCC、支持外键、提供一致性非锁定读，同时被设计用来最有效的利用内存和CPU。
+2、InnoDB存储引擎体系结构 后台线程的作用： ①：刷新内存池中的数据，保存缓存池中内存缓存的时最近的数据。 ②：将已修改的数据文件刷新到磁盘文件 ③：保证数据发生异常异常的情况下能恢复到正常运行状态
+2.1、后台线程 InnoDB属于多线程模型。
+   线程 作用     Master Thread 将缓存池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓冲、undo页的回收。   IO Thread 负责IO请求的回调   Purge Thread 事务提交之后，其所有使用的undo log可能不在需要，因此需要Purge Thread来回收已经使用并分配的undo页。   Page Cleaner Thread 为了减轻Master Thread的工作对于用户查询线程的阻塞，进一步提高InnoDB存储引擎的性能，InnoDB1.2x版本加入该线程，其作用是接手之前由Master Thread的刷新脏页的工作，减少Master的工作量。    2.2、内存 1、缓存池 InnoDB存储引擎是基于磁盘存储的，并将其中的记录按照页的方式进行管理。 缓存池是为了解决CPU与磁盘速度之间的鸿沟。 缓存池的大小直接影响能够缓存mysql数据的多少，也就直接影响了MySQL的性能. InnoDB缓存池实例 可以通过参数innodb_buffer_pool_instance参数配置多个缓存池实例，每一个页将会根据哈希值平均分配到不同的缓冲池实例中。
+2、缓存池管理 2.1、LRU列表 缓存池一般都是通过LRU（最近最少使用算法）进行管理的。缓冲池中默认页的大小为16K。 InnoDB对传统的LRU算法做了一些优化，在LRU列表中加入了midpoint位置。读取到新的页，并不是直接放入到LRU的首部，而是放入到LRU列表的midpoint位置（中心点插入策略）。 新加入的页何时才能从mid位置加入到new列表（热端），innodb使用innodb_old_blocks_time参数管理，当新读取的页在mid位置等待innodb_old_blocks_time指定的时间之后，将被放入到LRU列表的热端。 2.2、Free列表 LRU列表用来管理已经读取的页，当数据库启动的时候，LRU列表是空的，此时所有的页都存储在Free列表中。 2.3、unzip_LRU列表 innodb从1.0.x开始支持压缩的页的功能，unzip_LRU就是用来管理压缩页的。LRU列表是包含unzip_LRU。 标准页大小为16K，压缩的大小根据压缩比率不同，可分为2k、4k、8k。 unzip_LRU对不同压缩页大小的管理。以需要从缓冲池中分配4kb的页为例。 2.4、Flush列表 在LRU列表中的页被修改之后就变为了脏页，这是将会通过checkPoint机制，将脏页刷新回磁盘中。Flush列表，就是用于存储脏页的，也被称为脏页列表。脏页即存在于Flush列表中也存在与LRU列表中。LRU列表用来管理缓冲池中页的可用性，Flush列表用来管理将页刷新回磁盘。
+3、重做日志缓冲 InnoDB存储将重做日志信息先放到这个缓冲区，然后按一定的频率将其刷新到重做日志文件。 重做日志缓冲区内容刷新到磁盘时机： ①：MasterThread每一秒将重做日志缓冲刷新到重做日志文件 ②：每个事务提交时会将重做日志缓冲刷新到重做日志文件。 ③：当重做日志缓冲池剩余空间小于1/2时，重做缓冲刷新到重做日志文件。"/>
+
+    <meta property="og:title" content="MySQL表" />
+<meta property="og:description" content="1、简介 第一个支持ACID事务的存储引擎，行锁设计、支持MVCC、支持外键、提供一致性非锁定读，同时被设计用来最有效的利用内存和CPU。
+2、InnoDB存储引擎体系结构 后台线程的作用： ①：刷新内存池中的数据，保存缓存池中内存缓存的时最近的数据。 ②：将已修改的数据文件刷新到磁盘文件 ③：保证数据发生异常异常的情况下能恢复到正常运行状态
+2.1、后台线程 InnoDB属于多线程模型。
+   线程 作用     Master Thread 将缓存池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓冲、undo页的回收。   IO Thread 负责IO请求的回调   Purge Thread 事务提交之后，其所有使用的undo log可能不在需要，因此需要Purge Thread来回收已经使用并分配的undo页。   Page Cleaner Thread 为了减轻Master Thread的工作对于用户查询线程的阻塞，进一步提高InnoDB存储引擎的性能，InnoDB1.2x版本加入该线程，其作用是接手之前由Master Thread的刷新脏页的工作，减少Master的工作量。    2.2、内存 1、缓存池 InnoDB存储引擎是基于磁盘存储的，并将其中的记录按照页的方式进行管理。 缓存池是为了解决CPU与磁盘速度之间的鸿沟。 缓存池的大小直接影响能够缓存mysql数据的多少，也就直接影响了MySQL的性能. InnoDB缓存池实例 可以通过参数innodb_buffer_pool_instance参数配置多个缓存池实例，每一个页将会根据哈希值平均分配到不同的缓冲池实例中。
+2、缓存池管理 2.1、LRU列表 缓存池一般都是通过LRU（最近最少使用算法）进行管理的。缓冲池中默认页的大小为16K。 InnoDB对传统的LRU算法做了一些优化，在LRU列表中加入了midpoint位置。读取到新的页，并不是直接放入到LRU的首部，而是放入到LRU列表的midpoint位置（中心点插入策略）。 新加入的页何时才能从mid位置加入到new列表（热端），innodb使用innodb_old_blocks_time参数管理，当新读取的页在mid位置等待innodb_old_blocks_time指定的时间之后，将被放入到LRU列表的热端。 2.2、Free列表 LRU列表用来管理已经读取的页，当数据库启动的时候，LRU列表是空的，此时所有的页都存储在Free列表中。 2.3、unzip_LRU列表 innodb从1.0.x开始支持压缩的页的功能，unzip_LRU就是用来管理压缩页的。LRU列表是包含unzip_LRU。 标准页大小为16K，压缩的大小根据压缩比率不同，可分为2k、4k、8k。 unzip_LRU对不同压缩页大小的管理。以需要从缓冲池中分配4kb的页为例。 2.4、Flush列表 在LRU列表中的页被修改之后就变为了脏页，这是将会通过checkPoint机制，将脏页刷新回磁盘中。Flush列表，就是用于存储脏页的，也被称为脏页列表。脏页即存在于Flush列表中也存在与LRU列表中。LRU列表用来管理缓冲池中页的可用性，Flush列表用来管理将页刷新回磁盘。
+3、重做日志缓冲 InnoDB存储将重做日志信息先放到这个缓冲区，然后按一定的频率将其刷新到重做日志文件。 重做日志缓冲区内容刷新到磁盘时机： ①：MasterThread每一秒将重做日志缓冲刷新到重做日志文件 ②：每个事务提交时会将重做日志缓冲刷新到重做日志文件。 ③：当重做日志缓冲池剩余空间小于1/2时，重做缓冲刷新到重做日志文件。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/mysql/innodb%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" />
+<meta property="article:published_time" content="2023-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2023-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">MySQL表</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/mysql/">Mysql</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h2 id="1-简介">1、简介</h2>
+
+<p>第一个支持ACID事务的存储引擎，行锁设计、支持MVCC、支持外键、提供一致性非锁定读，同时被设计用来最有效的利用内存和CPU。</p>
+
+<h2 id="2-innodb存储引擎体系结构">2、InnoDB存储引擎体系结构</h2>
+
+<p><img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659354599319-b0fc1e1d-3089-45f4-ba83-d8a062c331a8.jpeg" alt="" />
+后台线程的作用：
+①：刷新内存池中的数据，保存缓存池中内存缓存的时最近的数据。
+②：将已修改的数据文件刷新到磁盘文件
+③：保证数据发生异常异常的情况下能恢复到正常运行状态</p>
+
+<h3 id="2-1-后台线程">2.1、后台线程</h3>
+
+<p>InnoDB属于多线程模型。</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>线程</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Master Thread</td>
+<td>将缓存池中的数据异步刷新到磁盘，保证数据的一致性，包括脏页的刷新、合并插入缓冲、undo页的回收。</td>
+</tr>
+
+<tr>
+<td>IO Thread</td>
+<td>负责IO请求的回调</td>
+</tr>
+
+<tr>
+<td>Purge Thread</td>
+<td>事务提交之后，其所有使用的undo log可能不在需要，因此需要Purge Thread来回收已经使用并分配的undo页。</td>
+</tr>
+
+<tr>
+<td>Page Cleaner Thread</td>
+<td>为了减轻Master Thread的工作对于用户查询线程的阻塞，进一步提高InnoDB存储引擎的性能，InnoDB1.2x版本加入该线程，其作用是接手之前由Master Thread的刷新脏页的工作，减少Master的工作量。</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="2-2-内存">2.2、内存</h3>
+
+<h4 id="1-缓存池">1、缓存池</h4>
+
+<p>InnoDB存储引擎是基于磁盘存储的，并将其中的记录按照页的方式进行管理。
+缓存池是为了解决CPU与磁盘速度之间的鸿沟。
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659528271994-d8001360-6803-4563-b043-e9afe7d7196a.jpeg" alt="" />
+缓存池的大小直接影响能够缓存mysql数据的多少，也就直接影响了MySQL的性能.
+InnoDB缓存池实例
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659770717422-39ea28ab-0122-4ec7-a141-806a5e2925d3.jpeg" alt="" />
+可以通过参数<code>innodb_buffer_pool_instance</code>参数配置多个缓存池实例，每一个页将会根据哈希值平均分配到不同的缓冲池实例中。</p>
+
+<h4 id="2-缓存池管理">2、缓存池管理</h4>
+
+<p>2.1、LRU列表
+缓存池一般都是通过LRU（最近最少使用算法）进行管理的。缓冲池中默认页的大小为16K。
+InnoDB对传统的LRU算法做了一些优化，在LRU列表中加入了midpoint位置。读取到新的页，并不是直接放入到LRU的首部，而是放入到LRU列表的midpoint位置（中心点插入策略）。
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659768659873-2fcaa175-9f15-438c-a234-fcbada0463a8.jpeg" alt="" />
+新加入的页何时才能从mid位置加入到new列表（热端），innodb使用innodb_old_blocks_time参数管理，当新读取的页在mid位置等待innodb_old_blocks_time指定的时间之后，将被放入到LRU列表的热端。
+2.2、Free列表
+LRU列表用来管理已经读取的页，当数据库启动的时候，LRU列表是空的，此时所有的页都存储在Free列表中。
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659768302572-537d5e0b-960b-4cb1-9f98-01b2cc6e59f2.jpeg" alt="" />
+2.3、unzip_LRU列表
+innodb从1.0.x开始支持压缩的页的功能，unzip_LRU就是用来管理压缩页的。LRU列表是包含unzip_LRU。
+标准页大小为16K，压缩的大小根据压缩比率不同，可分为2k、4k、8k。
+unzip_LRU对不同压缩页大小的管理。以需要从缓冲池中分配4kb的页为例。
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659770149931-0a1affef-f5be-4ceb-9d3f-5e88abe37800.jpeg" alt="" />
+2.4、Flush列表
+在LRU列表中的页被修改之后就变为了脏页，这是将会通过checkPoint机制，将脏页刷新回磁盘中。Flush列表，就是用于存储脏页的，也被称为脏页列表。脏页即存在于Flush列表中也存在与LRU列表中。LRU列表用来管理缓冲池中页的可用性，Flush列表用来管理将页刷新回磁盘。</p>
+
+<h4 id="3-重做日志缓冲">3、重做日志缓冲</h4>
+
+<p>InnoDB存储将重做日志信息先放到这个缓冲区，然后按一定的频率将其刷新到重做日志文件。
+重做日志缓冲区内容刷新到磁盘时机：
+①：MasterThread每一秒将重做日志缓冲刷新到重做日志文件
+②：每个事务提交时会将重做日志缓冲刷新到重做日志文件。
+③：当重做日志缓冲池剩余空间小于1/2时，重做缓冲刷新到重做日志文件。</p>
+
+<h4 id="4-额外的内存池">4、额外的内存池</h4>
+
+<h2 id="3-write-ahead-log-策略">3、Write Ahead Log 策略</h2>
+
+<p>目前的数据库缓冲结构是这样子的。
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659776810815-16a9720f-9974-4437-96f7-d8095a557658.jpeg" alt="" />
+如果缓冲区的页被修改了，就变成脏页，此时缓冲区的数据比磁盘的数据新，数据需要将缓冲区的数据刷新到磁盘中。如果每次页的数据发生了变化就刷新到磁盘，这将时巨大的开销。当前事务数据库系统普遍采用Wirte Ahead Log策略，即当事务提交时，先写重做日志，在修改缓冲区页。当发生宕机导致数据丢失时，可以通过重做日志完成数据恢复，保证了ACID中的D持久性的要求。
+1、WAL原理</p>
+
+<ul>
+<li><p>日志顺序追加性能远高于数据随机写.</p>
+
+<h2 id="3-checkpoint技术">3、CheckPoint技术</h2>
+
+<p>CheckPoint所做的事：将缓冲池中的脏页刷回磁盘。
+CheckPoint技术用于解决Write Ahead Log中的面临问题。
+在Write Ahead Log策略中需要在提交事务时，先写重做日志，如果缓冲池足够大，重做日志文件也可以足够大，那么完全就不需要将缓冲池的脏数据刷新到磁盘了，因为，即使数据库挂了，我们也可以使用重做日志恢复数据。但是这两点是不可能的。因此使用CheckPoint技术解决该问题。
+CheckPoint解决的问题
+①：缩短数据库的恢复时间：数据库恢复时只需要将CheckPoint之前的数据已经刷新回磁盘，不用处理了，只需处理CheckPoint之后的数据。
+②：缓存池不够用时，将脏页刷新到磁盘：当缓冲池不够用时，会将LRU列表尾部的页移除，如果该页时脏页，则强制执行CheckPoint，将脏页数据刷新到磁盘。
+③：重做日志不可用时，刷新脏页：重做日志时覆盖使用的，若此时重做日志还需要使用，那么必须强制产生CheckPoint，将缓冲池中的页至少刷新到当前重做日志的位置。</p>
+
+<h2 id="4-master-thread-工作方式">4、Master Thread 工作方式</h2>
+
+<p><img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659838407198-2ff2cd9c-829a-422e-bbdf-b49b895bd352.jpeg" alt="" /></p>
+
+<h3 id="4-1-主循环-loop">4.1、主循环（loop）</h3>
+
+<p>主循环主要的操作是：每一秒操作和每十秒操作。通过thead sleep 实现频率的保证（当然还有其它辅助手段保证频率）。
+每1秒的操作：</p></li>
+</ul>
+
+<ol>
+<li>日志缓冲刷新到磁盘，即使这个事务还没有提交（总是）</li>
+<li>合并插入缓冲（可能）</li>
+<li>至多刷新100个innodb的缓冲池中的脏页到磁盘（可能）</li>
+<li>如果当前没有用户活动，则切换到后台循环（background loop）（可能）</li>
+</ol>
+
+<p><img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659840051963-a9416040-3f13-41b3-931d-9dfee966dcb5.jpeg" alt="" />
+每10秒的操作：</p>
+
+<ol>
+<li>刷新100个脏页到磁盘（可能）</li>
+<li>合并至多5个插入缓冲（总是）</li>
+<li>将日志缓冲刷新到磁盘（总是）</li>
+<li>删除无用的undo页（总是）</li>
+<li>刷新100个或者10个脏页到磁盘（总是）</li>
+</ol>
+
+<p><img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659840621015-9ad034cf-9d15-4076-adbc-ec65fcc531bb.jpeg" alt="" /></p>
+
+<h2 id="5-innodb特性">5、InnoDB特性</h2>
+
+<p>关键特性有：</p>
+
+<ol>
+<li>插入缓冲</li>
+<li>两次写</li>
+<li>自适应哈希索引</li>
+<li>异步IO</li>
+<li>刷新邻接页</li>
+</ol>
+
+<p>关键的特性为innoDB带来了更好的性能和可靠性。</p>
+
+<h3 id="5-1-插入缓冲">5.1、插入缓冲</h3>
+
+<p>插入缓存给存储引擎innodb带来了性能上的提升。
+插入缓冲不是缓冲池中的一部分，innodb缓冲池中有插入缓冲的信息固然不错，但是插入缓冲和数据也一样，也是物理页的一个组成部分。
+在innodb存储引擎中，主键是唯一标识，通过应用程序的插入顺序是按照主键的顺序依次顺序插入的，因此插入聚集索引一般是顺序的，不需要磁盘随机读取。（并不是所有的聚集索引都是按照顺序递增的）。
+虽然聚集索引的插入时顺序的，只需要顺序读写磁盘，但一张表还有很多非聚集索引，非聚集索引的叶子节点的插入不在时顺序的了，需要离散的访问非聚集索引页。由于随机读取导致插入操作的性能下降。
+InnoDB使用插入缓冲来解决上面的问题。
+<img src="https://cdn.nlark.com/yuque/0/2022/jpeg/29117288/1659844261165-6732c463-e14a-4546-953a-14477edbae6e.jpeg" alt="" />
+Insert Buffer 使用需要同时满足的条件</p>
+
+<ol>
+<li>索引是辅助索引</li>
+<li>索引不是唯一的：因为唯一索引插入的时候需要不断查询现有的索引页保证插入数据的唯一性，这必须区离散的读取磁盘，失去了插入缓冲的意义。</li>
+</ol>
+
+<p>insert buffer的问题
+1、在写密集的情况下，插入缓冲会占用过多的缓冲池内存，在极端情况下这样页导致由于宕机导致插入缓冲数据丢失，在恢复时将会花费大量时间。</p>
+
+<h3 id="5-2-change-buffer">5.2、Change Buffer</h3>
+
+<p>是对insert buffer的升级。
+innodb1.0.x可以对DML操作（insert delete update）都进行缓存，他们分别是：<code>insert buffer</code>、<code>delete buffer</code>、<code>purge buffer</code>。
+change buffer依旧只适用于非唯一辅助索引。
+Update操作可以分为两个过程：</p>
+
+<ul>
+<li>将记录标记为删除：delete buffer</li>
+
+<li><p>将记录正在删除：purge buffer</p>
+
+<h3 id="5-3-插入缓存的内部实现">5.3、插入缓存的内部实现</h3>
+
+<p>insert buffer是一颗B+树。
+Insert Buffer Bitmap用来追踪16384个辅助索引页的可用空间。</p>
+
+<h2 id="6-两次写-双写-doublewrite">6、两次写（双写\doublewrite）</h2>
+
+<p>双写给innodb带了数据也的可靠性。
+问题现象：当发生数据库宕机时，可能innodb存储引擎正在写入某个页的表中，而这个页只写了一部分，之后就发生宕机了，这种情况被称为“部分失效”。
+innodb的双写分为两部分：①：内存中的doublewrite buffer，②：物理磁盘上的连续的128个页。
+为了防止缓存区中数据页由于宕机丢失数据，
+<img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306222103703.jpeg" alt="" /></p></li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306222104634.jpeg" alt="" />
+共享表空间中的双写页就是用来数据恢复的。</p>
+
+<h2 id="7-自适应哈希索引">7、自适应哈希索引</h2>
+
+<p>自适应哈希索引：innodb存储引擎会监控表上个索引页的查询。如果观察到建立哈希索引可以带来速度上的提升，则建立哈希索引，被称为自适应哈希索引。
+自适应哈希索引是通过缓存池的B+树页构造的，因此建立的速度很快，而且不需要对整张表构建哈希索引。
+InnoDB存储引擎会自动根据访问的频率和模式来自动地为某些热点页建立哈希索引。
+自适应哈希索引的要求：</p>
+
+<ul>
+<li>对这个页的连续访问模式必须是一样的。</li>
+<li>以该模式访问了100此</li>
+<li>以该模式访问了N次，其中N=页中记录 * <sup>1</sup>&frasl;<sub>16</sub></li>
+</ul>
+
+<p>自适应哈希索引的优势：</p>
+
+<ul>
+<li>读写速度可以提高2倍</li>
+
+<li><p>辅助索引的连接操作性能提高5倍</p>
+
+<h2 id="8-异步io">8、异步IO</h2>
+
+<p>使用异步IO的方式处理磁盘操作
+异步IO（AIO）的优势</p></li>
+
+<li><p>用户发出一个IO请求之后，可以继续发出另一个请求，无须等待</p></li>
+
+<li><p>可以进行IO合并，提供IOPS的性能</p>
+
+<h2 id="9-刷新邻接页">9、刷新邻接页</h2>
+
+<p>原理：当刷新一个脏页的时候，InnoDB存储引擎会检测该页所在的区的所有页，如果脏页，则以其进行刷新。好处是借助AIO，将多个IO操作合并处理
+问题：</p></li>
+
+<li><p>可能将不怎么脏的页刷新，之后该页又很快变成了脏页。</p></li>
+
+<li><p>固态硬盘有较高的IPOPS，是否需要该特性。</p></li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Redis脑裂 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis脑裂"/>
+<meta name="twitter:description" content=" 1、问题严重性 Redis脑裂会导致数据丢失。
+2、问题现象 在Redis中集群中多个master。
+3、出现条件  redis集群
+ redis集群以一主多从架构
+ master进行写数据，slave进行读数据。
+  4、问题出现的原因  一般生产环境中都会涉及到redis集群，并且以一主多从的架构进行搭建redis集群，master中进行写操作，slave中进行读操作，master写入的数据将会同步到slave中。
+上诉的这种redis集群架构在极端情况下将会发生redis脑裂这种事。当redis集群内部出现问题的时候，master与从slave出现问题，无法正常连接，但master与客户端是能够正常连接的，这时候哨兵发现了master断开连接了，所以会在slave中重新选取新master，这时候集群就出现了两个master，旧的客户端依旧连接的旧的master，新的客户端会连接到新master，此时旧的客户端往旧master写入的数据无法同步到slave中，但读数据是从slave中读取的，所以这部分数据是无法读取到的。
+上诉也就是出现了读不到数据的问题。严重的问题出现在当旧master重新与slave取得联系之后，旧的master就会从master转变为slave，从master转变为slave意味着旧master的数据将会被全部清空然后从新master同步数据。这就意味着旧客户端写入旧master的数据将会被清空丢失。
+ 5、解决方案  主要通过设置参数来解决
+将参数min-slave-to-write为1，设置主库能进行数据同步的最小从库数据为1，当小于这个参数的时候主库将会拒绝客户端写入，返回错误给客户端。
+将参数min-slave-max-lag=10，设置主从库进行数据复制时，从库向主从发送ack消息的最大延迟为10秒，当旧master超过10秒没有收到salve的的回复的时候，老master将会拒绝客户端写入，返回错误给客户端。
+ "/>
+
+    <meta property="og:title" content="Redis脑裂" />
+<meta property="og:description" content=" 1、问题严重性 Redis脑裂会导致数据丢失。
+2、问题现象 在Redis中集群中多个master。
+3、出现条件  redis集群
+ redis集群以一主多从架构
+ master进行写数据，slave进行读数据。
+  4、问题出现的原因  一般生产环境中都会涉及到redis集群，并且以一主多从的架构进行搭建redis集群，master中进行写操作，slave中进行读操作，master写入的数据将会同步到slave中。
+上诉的这种redis集群架构在极端情况下将会发生redis脑裂这种事。当redis集群内部出现问题的时候，master与从slave出现问题，无法正常连接，但master与客户端是能够正常连接的，这时候哨兵发现了master断开连接了，所以会在slave中重新选取新master，这时候集群就出现了两个master，旧的客户端依旧连接的旧的master，新的客户端会连接到新master，此时旧的客户端往旧master写入的数据无法同步到slave中，但读数据是从slave中读取的，所以这部分数据是无法读取到的。
+上诉也就是出现了读不到数据的问题。严重的问题出现在当旧master重新与slave取得联系之后，旧的master就会从master转变为slave，从master转变为slave意味着旧master的数据将会被全部清空然后从新master同步数据。这就意味着旧客户端写入旧master的数据将会被清空丢失。
+ 5、解决方案  主要通过设置参数来解决
+将参数min-slave-to-write为1，设置主库能进行数据同步的最小从库数据为1，当小于这个参数的时候主库将会拒绝客户端写入，返回错误给客户端。
+将参数min-slave-max-lag=10，设置主从库进行数据复制时，从库向主从发送ack消息的最大延迟为10秒，当旧master超过10秒没有收到salve的的回复的时候，老master将会拒绝客户端写入，返回错误给客户端。
+ " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/redis/redis%E8%84%91%E8%A3%82/" />
+<meta property="article:published_time" content="2022-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2022-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Redis脑裂</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2022
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/redis/">Redis</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="1-问题严重性">1、问题严重性</h1>
+
+<p>Redis脑裂会导致数据丢失。</p>
+
+<h1 id="2-问题现象">2、问题现象</h1>
+
+<p>在Redis中集群中多个master。</p>
+
+<h1 id="3-出现条件">3、出现条件</h1>
+
+<ul>
+<li><p>redis集群</p></li>
+
+<li><p>redis集群以一主多从架构</p></li>
+
+<li><p>master进行写数据，slave进行读数据。</p></li>
+</ul>
+
+<h1 id="4-问题出现的原因">4、问题出现的原因</h1>
+
+<blockquote>
+<p>一般生产环境中都会涉及到redis集群，并且以一主多从的架构进行搭建redis集群，master中进行写操作，slave中进行读操作，master写入的数据将会同步到slave中。</p>
+
+<p>上诉的这种redis集群架构在极端情况下将会发生redis脑裂这种事。当redis集群内部出现问题的时候，master与从slave出现问题，无法正常连接，但master与客户端是能够正常连接的，这时候哨兵发现了master断开连接了，所以会在slave中重新选取新master，这时候集群就出现了两个master，旧的客户端依旧连接的旧的master，新的客户端会连接到新master，此时旧的客户端往旧master写入的数据无法同步到slave中，但读数据是从slave中读取的，所以这部分数据是无法读取到的。</p>
+
+<p>上诉也就是出现了读不到数据的问题。严重的问题出现在当旧master重新与slave取得联系之后，旧的master就会从master转变为slave，从master转变为slave意味着旧master的数据将会被全部清空然后从新master同步数据。这就意味着旧客户端写入旧master的数据将会被清空丢失。</p>
+</blockquote>
+
+<h1 id="5-解决方案">5、解决方案</h1>
+
+<blockquote>
+<p>主要通过设置参数来解决</p>
+
+<p>将参数min-slave-to-write为1，设置主库能进行数据同步的最小从库数据为1，当小于这个参数的时候主库将会拒绝客户端写入，返回错误给客户端。</p>
+
+<p>将参数min-slave-max-lag=10，设置主从库进行数据复制时，从库向主从发送ack消息的最大延迟为10秒，当旧master超过10秒没有收到salve的的回复的时候，老master将会拒绝客户端写入，返回错误给客户端。</p>
+</blockquote>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

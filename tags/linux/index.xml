@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on 果汁康</title>
+    <link>https://fruitkang.github.io/tags/linux/</link>
+    <description>Recent content in Linux on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linux修改主机名</title>
+      <link>https://fruitkang.github.io/linux/linux%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/linux/linux%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D/</guid>
+      <description>一、简介  CentOS有三类的主机名
+静态的（static hotsname）也称内核主机名，是系统在启动时从/etc/hostname初始化的主机名。
+瞬态/动态的（transient hostname） 是系统运行时临时分配的主机名。例如，通过DHCP或者mDNS服务器分配。
+灵活的（pretty hostname）也称”别名“主机名，允许使用特殊符号或者空格。静态和瞬态主机名需要遵从互联网域名同样的规则。
+ 1.1、查看主机名称  CentOS中提供了hostnamectl命令
+[root@node01 ~]# hostnamectl Static hostname: node01 Icon name: computer-vm Chassis: vm Machine ID: 5f9b4f4a14b24bb5b4c26f67f59d06fd Boot ID: 62e9c57cf06e4665a4c3b41761da6f05 Virtualization: vmware Operating System: CentOS Linux 7 (Core) CPE OS Name: cpe:/o:centos:centos:7 Kernel: Linux 3.10.0-1160.el7.x86_64 Architecture: x86-64 # 查看静态主机名 [root@node01 ~]# hostnamectl --static node01 # 查看瞬态主机名 [root@node01 ~]# hostnamectl --transient node01 # 查看灵活主机名 [root@node01 ~]# hostnamectl --pretty  CentOS中其他查看主机名命令</description>
+    </item>
+    
+    <item>
+      <title>Linux安装mysql5.7</title>
+      <link>https://fruitkang.github.io/linux/linux%E5%AE%89%E8%A3%85mysql5.7/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/linux/linux%E5%AE%89%E8%A3%85mysql5.7/</guid>
+      <description>①下载并mysql官方提供的yum仓库。
+文件下载路径：
+http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
+文件：
+#下载文件 wget -i http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm #安装该yum仓库源 yum install mysql57-community-release-el7-10.noarch.rpm  安装完该yum仓库我可以发现在centos的仓库文件下多了两个文件。
+②安装mysql服务
+#执行安装命令-指定了安装路径 yum --installroot=/opt/mysql57 --releasever=/ install mysql-community-server #安装命令 yum install mysql-community-server  安装中途选择输入都为：y
+等待安装程序输出&amp;rdquo;完毕&amp;rdquo;则安装完成。
+这种安装方式会自动覆盖centos自带的mariadb。
+③启动mysql服务
+#启动mysql服务 systemctl start mysqld #查看mysql服务的状态 systemctl status mysqld.service  ④登录mysql
+此时mysql服务已经启动，但是要想登录mysql服务必须知道root用户的密码，可以通过查看日志知道root用户的初始密码。
+#进入日志目录 cd /var/log #根据password关键字过滤查找初始化密码 grep &amp;quot;password&amp;quot; mysqld.log  登录mysql服务
+#登录命令 mysql -uroot -p #输入初始化密码  进行修改密码：新密码必须包含数字大小写字母和符号
+ALTER USER &#39;root&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;new password&#39;;  ⑤开启mysql的远程访问权限
+#开启mysql远程访问权限--这里只是开启了192.168.0.1的权限 grant all privileges on *.</description>
+    </item>
+    
+    <item>
+      <title>Linux常用操作</title>
+      <link>https://fruitkang.github.io/linux/linux%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/linux/linux%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</guid>
+      <description>一、设置Linux网络 ①设置Linux的IP地址为静态获取（防止每次重启Linux导致IP地址发生变化）
+修改文件 [/etc/sysconfig/network-scripts/ifcfg-enp0s3]
+TYPE=&amp;quot;Ethernet&amp;quot; PROXY_METHOD=&amp;quot;none&amp;quot; BROWSER_ONLY=&amp;quot;no&amp;quot; # 设置静态获取ip，若是动态则设置为dhcp BOOTPROTO=&amp;quot; &amp;quot; DEFROUTE=&amp;quot;yes&amp;quot; IPV4_FAILURE_FATAL=&amp;quot;no&amp;quot; IPV6INIT=&amp;quot;yes&amp;quot; IPV6_AUTOCONF=&amp;quot;yes&amp;quot; IPV6_DEFROUTE=&amp;quot;yes&amp;quot; IPV6_FAILURE_FATAL=&amp;quot;no&amp;quot; IPV6_ADDR_GEN_MODE=&amp;quot;stable-privacy&amp;quot; # 设置网卡名称 NAME=&amp;quot;enp0s3&amp;quot; UUID=&amp;quot;6c58d8b7-5780-4c55-8d54-99dc3786d056&amp;quot; DEVICE=&amp;quot;enp0s3&amp;quot; # 设置为yes ONBOOT=&amp;quot;yes&amp;quot; # 设置ip地址 IPADDR=&amp;quot;192.168.1.12&amp;quot; # 设置子网掩码 PREFIX=&amp;quot;24&amp;quot; # 设置网关 GATEWAY=&amp;quot;192.168.1.1&amp;quot; IPV6_PRIVACY=&amp;quot;no&amp;quot;  二、关闭Linux防火墙 查看防火墙状态：systemctl status firewalld
+临时关闭防护墙：systemctl stop firewalld（关机重启之后，设置失效）
+开启防火墙：systemctl start firewalld（关机重启之后，设置失效）
+启用防火墙：systemctl enable firewalld
+禁用防火墙：systemctl disable firewalld
+三、设置系统DNS服务器 修改文件[/etc/resolv.conf ]，添加DNS服务器地址
+nameserver 8.8.8.8 nameserver 114.114.114.114  四、解决yum下载速度慢 yum默认是国外源。所以下载速度慢，所以我们需要更换yum仓库源为阿里或网易等国内源，步骤：
+①下载阿里或网易的centos仓库文件。
+②使用国内软件仓库文件替换默认国外仓库文件。
+#centos软件仓库源文件的存储位置：/etc/yum.repos.d) #进入文件位置 cd /etc/yum.repos.d #创建备份目录 mkdir yum.</description>
+    </item>
+    
+  </channel>
+</rss>

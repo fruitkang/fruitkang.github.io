@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Javas on 果汁康</title>
+    <link>https://fruitkang.github.io/java/</link>
+    <description>Recent content in Javas on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 20 Jun 2023 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java BIO&amp;NIO&amp;AIO</title>
+      <link>https://fruitkang.github.io/java/java-bionioaio/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java-bionioaio/</guid>
+      <description>1、简介 本节主要介绍Java的IO模型。
+ BIO：阻塞式IO模型
+ NIO：非阻塞式IO模型
+ AIO：异步非阻塞网络通信模型
+  2、BIO阻塞式IO模型 BIO在连接的建立与读数据都是阻塞式的。
+在BIO模型所有的客户端与服务器的IO操作是直接通过socket操作的。
+package com.gzk.bio; import java.io.IOException; import java.net.ServerSocket; import java.net.Socket; /** * @author 23A2 * @date 2021-11-02 * @deprecated socket服务端 */ public class SocketServer { public static void main(String[] args) throws IOException { ServerSocket serverSocket = new ServerSocket(9000); while (true){ /*此方法为阻塞的*/ Socket socket = serverSocket.accept(); System.out.println(&amp;quot;客户端连接了&amp;quot;); new Runnable(){ @Override public void run() { try { /*有客户端连接，则处理客户端连接*/ handler(socket); } catch (IOException e) { e.</description>
+    </item>
+    
+    <item>
+      <title>Java基础概述</title>
+      <link>https://fruitkang.github.io/java/java%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java基础语法</title>
+      <link>https://fruitkang.github.io/java/java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java多线程</title>
+      <link>https://fruitkang.github.io/java/java%E5%A4%9A%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E5%A4%9A%E7%BA%BF%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java异常处理</title>
+      <link>https://fruitkang.github.io/java/java%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java数组</title>
+      <link>https://fruitkang.github.io/java/java%E6%95%B0%E7%BB%84/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E6%95%B0%E7%BB%84/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java面向对象编程</title>
+      <link>https://fruitkang.github.io/java/java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java面向对象编程（下）</title>
+      <link>https://fruitkang.github.io/java/java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%E4%B8%8B/</link>
+      <pubDate>Tue, 20 Jun 2023 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/java/java%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%E4%B8%8B/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

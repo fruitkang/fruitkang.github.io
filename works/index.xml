@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Works on 果汁康</title>
+    <link>https://fruitkang.github.io/works/</link>
+    <description>Recent content in Works on 果汁康</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 20 Aug 2022 22:12:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://fruitkang.github.io/works/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>位图BitSet</title>
+      <link>https://fruitkang.github.io/works/bitset%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Sat, 20 Aug 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/bitset%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description> 1、简介  在谈什么是位图之前我们先来看一道&amp;rdquo;非常简单的题&amp;rdquo;：有40亿个无符号的整型数据，现在给定一个目标数字，判断这个数字是否在这40亿数据中。题目看起来确实非常简单，有的同学说直接遍历一遍不就ok了吗？还有的同学给出了更高效的查找方式就是将这些数字排序然后进行二分查找。但是，这是有问题的，问题并不在于你搜索这个数字的效率问题，而是你在遍历也好排序也罢，这些数字在内存中放的下么？
+一个整型int就是4个字节，10亿个int差不多已经需要4G的内存了，40亿个int就是16G。所以这里方法行不通的根本原因实际上是内存不够，但是我们今天的讲的位图却能很好的帮助我们处理这个问题。
+ 2、位图模型  既然根本原因是这些数据用int放不下，那么是否有更小的东西标记这些数字呢？没错，有的同学想到了，char只占一个字节或许能表示一个数字，但是随着数字位数的增多，依旧不可能使用一个字符表示一个数字，这就意味着小于4G内存还是不能解决这个问题。
+其实说到这里，我们的问题就转化为如何使用更小的内存单元来标记一个数字，而在程序中我们最小的访问单位的bit位，所以现在我们一起来看使用比特位如何标记(映射)这些数据。
+现在我们发现，4个字节本来只能存储一个int，而现在使用位图我们就存了(映射)32个数字，意味着16G/32约等于500m左右我们就能映射这些数据。
+ 3、工作的使用  使用redis中提供的bitset结构统计活跃用户数
+ </description>
+    </item>
+    
+    <item>
+      <title>mq保证消息不丢失</title>
+      <link>https://fruitkang.github.io/works/mq%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E4%B8%8D%E4%B8%A2%E5%A4%B1/</link>
+      <pubDate>Wed, 20 Jul 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/mq%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E4%B8%8D%E4%B8%A2%E5%A4%B1/</guid>
+      <description> 一、简介  项目中使用到Kafka消息中间件，例如订单抽取的就用到了Kafka消息中间件。使用到Kafka就会涉及消息不丢失的问题。
+ 二、解决方案 2.1、解决超时问题导致的消息丢失问题 Kafka提供了消息确认的机制保证消息不丢失问题，但是也会存在ACK超时的这种情况，这种情况下我们因该如何解决呢。
+  在发送之前可以在数据库记录下这条消息的并且状态为未确认，之后收到ACK之后修改数据库为已确认.
+ 有一个定时任务需要将消息未确认的消息进行重新投递
+ 消费者需要确保消息的幂等。
+   2.2、通过配置解决不丢失问题  这里以Kafka消息中间件为例。
+ Kafka提供的解决方案   Kafka分为三部分，分别为生产者、borker、消费者，要保证消息不丢失就需要先保证这三部分消息不丢失，
+可以通过配置生产者和消费者的ACK确认机制以保证消息不丢失
+可以通过配置broker消息持久化的时机以保证broker消息不丢失
+  三、总结  通过消息状态表保证消息至少投递一次 定时任务兜底 消费者保证消息幂等  </description>
+    </item>
+    
+    <item>
+      <title>外部接口中心化处理</title>
+      <link>https://fruitkang.github.io/works/%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%BF%83%E5%8C%96%E5%A4%84%E7%90%86/</link>
+      <pubDate>Wed, 20 Jul 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%BF%83%E5%8C%96%E5%A4%84%E7%90%86/</guid>
+      <description>一、简介  系统中有大量与外部系统进行交互的接口，例如在我们的系统进行一些用户、设备的增删改之后需要及时调用对方接口并将数据同步给外部系统，之前的方案耦合性太高，不便于管理和扩展。
+此次修改方案如下
+ 二、当前问题  当前与外部系统交互方式
+当前系统在需要与外部系统交互的接口中直接调用对方接口进行数据同步，这导致调用外部系统的接口散落到系统的各个地方，不便于管理，耦合性过高。
+ 三、解决方案  1、使用观察者模式搭建外部交互服务，所以需要与外部系统交互的服务都通过此服务进行集中化处理。
+2、提供一个spring-starter包
+ 1、在这种个包中提供了@Insert、@Delete、@Update、@Full
+ insert注解用于数据添加的时候
+ delete注解用于数据删除的时候
+ update注解用于数据修改的时候
+ full注解用于全量数据同步的时候
+  public @interface Insert { /** * 同步数据类型,指明需要同步的数据类型 * @return */ DataTypeEnum dataType(); /** * 一个Spring EL表达式，用于解析同步数据的id * @return */ String parseIdList(); /** * * 当参数或返回值太过于复杂，Spring EL表达式不好解析的时候可以使用此类来处理参数得到需要同步的数据id * @return */ Class&amp;lt;? extends ParseIdService&amp;gt; ParseIdClass() default DefaultParseIdService.class; }  2、提供一个AOP切面，在这个切面中主要去解析方法上面写的上述提供的结果注解，然后得到需要同步的数据，然后请求对外服务让对外服务去帮助我们去同步数据。
+ 3、在需要同步的方法上标明上面提供的注解即可。
+ 四、优势  将所有与外部交互的接口放在对外微服务中处理，并在对外微服务中使用观察者模式便于扩展。</description>
+    </item>
+    
+    <item>
+      <title>国际化功能的中心化处理</title>
+      <link>https://fruitkang.github.io/works/%E5%9B%BD%E9%99%85%E5%8C%96%E5%8A%9F%E8%83%BD%E7%9A%84%E4%B8%AD%E5%BF%83%E5%8C%96/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/%E5%9B%BD%E9%99%85%E5%8C%96%E5%8A%9F%E8%83%BD%E7%9A%84%E4%B8%AD%E5%BF%83%E5%8C%96/</guid>
+      <description> 一、简介 1.1、原有方案  当前系统中已经有国际化的功能了，这里的国际化功能是通过Spring提供的i18n功能去处理的，也就是通过在resource目录下面建立对应的国际化文件，然后在上下文中进行埋点（也就是国际化的code编码）。
+每个微服务都有自己的国际化文件，不便于统一处理，例如现在要为所有的微服务添加一个关于金额转换的国际化功能，就需要改变所有微服务。
+ 1.1.1、缺点   上述的方案导致国际化的功能散落在服务的各个地方，也就是需要国际化功能的地方都需要建立自己的国际化文件并指定自己上下问的code编码。 不便于管理和扩展，举个例子，在开发过程中A和B开发分别在自己的分支上进行开发，然后分别定义了自己的国际化编码为code1，当分支合并之后发现code编码冲突了导致一方必须重新修改自己的编码。   1.2、我的方案  建立统一的国际化微服务，每个微服务在需要的时候去调用国际化微服务的的接口，完成国际化需求。
+  建立国际化微服务 提供统一的sdk供每个微服务使用，sdk中提供了本地缓存，本地缓存中缓存当前微服务的国际化数据， 本地缓存具有过期时间，可以解决缓存长期不一致问题。 当国际化微服务数据修改之后将发mq消息给各个微服务，微服务将消费消息并修改本地缓存，保证缓存数据的一致性。 国际化微服务提供了前端页面供各用户去添加和修改国际化数据。  1.3、数据设计 service_name：微服务名，指定该国际化数据属于哪个微服务
+local：语言标识，指定该数据属于那种语言
+code：国际化数据的code码
+ 国际化功能可以看做是一个大的map集合，整个map的key为service_name:local:code，根据这个key就可以得知是哪个微服务需要code的那种语言的文案。
+ </description>
+    </item>
+    
+    <item>
+      <title>数据订阅服务搭建</title>
+      <link>https://fruitkang.github.io/works/%E6%95%B0%E6%8D%AE%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/%E6%95%B0%E6%8D%AE%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/</guid>
+      <description> 一、简介  系统当前有需求与外部系统进行数据交互，交互的流程如下
+  实现方案    当外部系统登录之后再redis中添加一个记录，其中key为用户唯一标识，过期时间为心跳间隔时间。 每次心跳请求都去更新上面redis记录的过期时间，保证心跳。 当用户发起订阅数据请求（请求中提供了推送数据的地址）之后，在quatz定时任务中添加数据推送的定时任务，这个定时任务的唯一标识就是该用户的唯一表示。并且定时任务每次执行时都判断redis1记录是否过期，如果过期则将该定时任务自动停止并删除该定时任务。 当用户发送停止数据推送的时候在quartz定时任务框架中停止并删除对应定时任务。   </description>
+    </item>
+    
+    <item>
+      <title>解决报表查询缓慢的问题</title>
+      <link>https://fruitkang.github.io/works/%E8%A7%A3%E5%86%B3%E6%8A%A5%E8%A1%A8%E6%9F%A5%E8%AF%A2%E7%BC%93%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Mon, 20 Jun 2022 22:12:50 +0800</pubDate>
+      
+      <guid>https://fruitkang.github.io/works/%E8%A7%A3%E5%86%B3%E6%8A%A5%E8%A1%A8%E6%9F%A5%E8%AF%A2%E7%BC%93%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <description>一、问题介绍  项目中报表的查询接口的性能较慢，虽然目前运营那边可以接受但是考虑到后续项目的发展，当前必须进行优化。
+ 二、问题查找 2.1、SQL问题  当前报表查询的接口的部分sql的书写并不规范，导致sql并未命中索引。例如前端要求查询【2022年10月~2022年12月】的数据，部分sql书写未select xxxx from table where date_fromat(date) between 2022-10 and 2022-12，这种在索引字段上加函数的操作导致索引失效，这只是其中一种情况，还有其他情况，例如未使用覆盖索引、使用了临时表、分组之后进行了多余的排序、不满足最左匹配、甚至没有建立索引的情况。
+ 2.2、数据量问题   当前报表查询的接口主要是直接查询订单表数据。 订单表为业务的核心数据表，随着日后的发展订单表的数据量也将逐渐增大，报表查询性能也将下降。    三、问题解决 3.1、优化sql  按照规范书写SQL，把在索引字段上使用函数的情况放到Java程序中去处理参数为合适的数据格式。
+根据需求建立索引，并尽量使用覆盖索引或索引下推以减少回表次数。
+SQL需要满足最左匹配。
+分组之后如果无需排序可以使用group by xxxx order by null减少不必要的排序
+等等其他一些方式
+ 3.2、解决数据量较大问题 3.2.1、数据抽取方案（采用）  简介   我们的系统是Saas系统，系统中有商户、运营商等业务角色。
+将订单表根据这些业务角色分别抽取出所需要的年运营商数据表、月运营商数据表、日运营商数据表等各种抽取表，后续运营商按照年查询数据的之后直接到对应的表里面直接查询，无需查询订单表等核心表。
+  实现方案   在订单入库的时候发一个订单的mq消息，数据抽取服务收到这个消息之后同步去修改对饮运营商的日、月、年的抽取表。
+加一个定时任务，每天晚上去全量抽取前一天的数据，去兜底mq消息消费失败的情况。
+写一个接口，在上线之后抽取之前没有抽取的数据。
+  方案优势    查询数据量极具变小，例如一个运营商一天有一万条数据，但抽取之后这一万条数据就变成了一条数据，极大的减少了数据查询两。 减少查询核心订单表的次数，缓解了订单表的压力。 实现方案较为简单，只需引入mq消息去同步修改抽取表的数据即可。    方案劣势    订单表数据量大的问题没有解决，对于一些必须查询订单表的情况可能不大友好。 引入mq这种消息就面临着这种数据的不一致问题（运营允许当天数据可以不准确，所以对我们影响不大）   3.</description>
+    </item>
+    
+  </channel>
+</rss>

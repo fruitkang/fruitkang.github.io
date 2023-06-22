@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Spring Security学习笔记 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spring Security学习笔记"/>
+<meta name="twitter:description" content="一、简介  Spring Security提供了一整套完整的web安全性的完整解决方案。Spring Security两大核心，认证，授权。
+ 1.1、认证  验证用户为系统的合法主体，通俗：用户能够登录这个系统
+ 1.2、授权  用户是否有权限做某些事情。
+ 1.3、Spring Security 与 Shiro的特点  Spring Security 特点   1、和Spring无缝整合
+2、全面权限控制
+3、专门为web开发而设计
+ 旧版本不能脱离web环境 新版本可以脱离web环境  4、重量级
+  Shiro特点   1、轻量级
+2、通用性
+ 好处：不局限于web环境
+ 坏处：web环境下特点的需求需要手动编码
+   1.4、安全管理技术栈推荐  1、SSM &#43; Shiro
+2、Spring Boot / Spring Cloud &#43; Spring Security
+ 二、Spring Security基本原理 2.1、基本介绍  Spring Security本质是一个过滤器链，有多个过滤器组成，是基于JavaWeb中的过滤器Filter执行的，Filter执行doFilter方法，当过滤器执行放行操作之后才能到下一个过滤器执行。
+通过源码可知有众多过滤器，这里介绍3个。
+ FilterSecurityInterceptor  方法层级的权限过滤器，基本位于过滤器的最底层。"/>
+
+    <meta property="og:title" content="Spring Security学习笔记" />
+<meta property="og:description" content="一、简介  Spring Security提供了一整套完整的web安全性的完整解决方案。Spring Security两大核心，认证，授权。
+ 1.1、认证  验证用户为系统的合法主体，通俗：用户能够登录这个系统
+ 1.2、授权  用户是否有权限做某些事情。
+ 1.3、Spring Security 与 Shiro的特点  Spring Security 特点   1、和Spring无缝整合
+2、全面权限控制
+3、专门为web开发而设计
+ 旧版本不能脱离web环境 新版本可以脱离web环境  4、重量级
+  Shiro特点   1、轻量级
+2、通用性
+ 好处：不局限于web环境
+ 坏处：web环境下特点的需求需要手动编码
+   1.4、安全管理技术栈推荐  1、SSM &#43; Shiro
+2、Spring Boot / Spring Cloud &#43; Spring Security
+ 二、Spring Security基本原理 2.1、基本介绍  Spring Security本质是一个过滤器链，有多个过滤器组成，是基于JavaWeb中的过滤器Filter执行的，Filter执行doFilter方法，当过滤器执行放行操作之后才能到下一个过滤器执行。
+通过源码可知有众多过滤器，这里介绍3个。
+ FilterSecurityInterceptor  方法层级的权限过滤器，基本位于过滤器的最底层。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/framework/spring-security%E7%AC%94%E8%AE%B0/" />
+<meta property="article:published_time" content="2023-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2023-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Spring Security学习笔记</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/framework/">Framework</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="一-简介">一、简介</h1>
+
+<blockquote>
+<p>Spring Security提供了一整套完整的web安全性的完整解决方案。Spring Security两大核心，认证，授权。</p>
+</blockquote>
+
+<h2 id="1-1-认证">1.1、认证</h2>
+
+<blockquote>
+<p>验证用户为系统的合法主体，通俗：用户能够登录这个系统</p>
+</blockquote>
+
+<h2 id="1-2-授权">1.2、授权</h2>
+
+<blockquote>
+<p>用户是否有权限做某些事情。</p>
+</blockquote>
+
+<h2 id="1-3-spring-security-与-shiro的特点">1.3、Spring Security 与 Shiro的特点</h2>
+
+<ul>
+<li><strong>Spring Security 特点</strong></li>
+</ul>
+
+<blockquote>
+<p>1、和Spring无缝整合</p>
+
+<p>2、全面权限控制</p>
+
+<p>3、专门为web开发而设计</p>
+
+<ul>
+<li>旧版本不能脱离web环境</li>
+<li>新版本可以脱离web环境</li>
+</ul>
+
+<p>4、重量级</p>
+</blockquote>
+
+<ul>
+<li><strong>Shiro特点</strong></li>
+</ul>
+
+<blockquote>
+<p>1、轻量级</p>
+
+<p>2、通用性</p>
+
+<ul>
+<li><p>好处：不局限于web环境</p></li>
+
+<li><p>坏处：web环境下特点的需求需要手动编码</p></li>
+</ul>
+</blockquote>
+
+<h2 id="1-4-安全管理技术栈推荐">1.4、安全管理技术栈推荐</h2>
+
+<blockquote>
+<p>1、SSM + Shiro</p>
+
+<p>2、Spring Boot / Spring Cloud + Spring Security</p>
+</blockquote>
+
+<h1 id="二-spring-security基本原理">二、Spring Security基本原理</h1>
+
+<h2 id="2-1-基本介绍">2.1、基本介绍</h2>
+
+<blockquote>
+<p>Spring Security本质是一个过滤器链，有多个过滤器组成，是基于JavaWeb中的过滤器Filter执行的，Filter执行doFilter方法，当过滤器执行放行操作之后才能到下一个过滤器执行。</p>
+
+<p>通过源码可知有众多过滤器，这里介绍3个。</p>
+
+<ul>
+<li>FilterSecurityInterceptor</li>
+</ul>
+
+<p>方法层级的权限过滤器，基本位于过滤器的最底层。</p>
+
+<ul>
+<li>ExceptionTranslationFilter</li>
+</ul>
+
+<p>是一个异常处理器，用来处理认证授权过程中抛出的异常。</p>
+
+<ul>
+<li>UsernamePasswordAuthenticationFilter</li>
+</ul>
+
+<p>对login的post请求做拦截，校验表单中的用户名和密码。</p>
+</blockquote>
+
+<h2 id="2-2-过滤器加载过程">2.2、过滤器加载过程</h2>
+
+<blockquote>
+<p>SpringBoot对SpringSecurity提供了自动化的配置方案。</p>
+
+<p>如果不适用springBoot，则我们需要自己配置，以下为如果自己配置SpringSecurity，当然这些springboot已经帮我们做了，但我们依旧得了解。</p>
+
+<p>1、使用SpringSecurity，我们需要配置过滤器：DelegatingFilterProxy</p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211331619.png" alt="image-20230621133137627" /></p>
+
+<h2 id="2-3-springsecurity重要接口">2.3、SpringSecurity重要接口</h2>
+
+<ul>
+<li><strong>UserDetailService接口</strong></li>
+</ul>
+
+<blockquote>
+<p>实际项目中账户的密码都是从数据库中查询出来的。所以我们需要通过自定义逻辑控制认证逻辑。而UserDetailService接口就是用来查询数据库用户名和密码的接口。</p>
+</blockquote>
+
+<ul>
+<li><strong>PasswordEncoder接口</strong></li>
+</ul>
+
+<blockquote>
+<p>在实际过程中，用户的密码并不是明文的，而是进行加密之后存储的，<strong>PasswordEncoder</strong>就是进行密码加密的。</p>
+</blockquote>
+
+<ul>
+<li><strong>自定义认证逻辑</strong></li>
+</ul>
+
+<p>1、创建继承UsernamePasswordAuthenticationFilter类，并重下面三个方法</p>
+
+<ul>
+<li><strong>认证方法</strong></li>
+</ul>
+
+<pre><code class="language-java">  public Authentication attemptAuthentication(HttpServletRequest request,
+        HttpServletResponse response) throws AuthenticationException {
+  }
+</code></pre>
+
+<ul>
+<li>认证成功方法</li>
+</ul>
+
+<pre><code class="language-java">  /**
+   * Default behaviour for successful authentication.
+   * Subclasses can override this method to continue the {@link FilterChain} after
+   * successful authentication.
+   *
+   * @param request
+   * @param response
+   * @param chain
+   * @param authResult the object returned from the &lt;tt&gt;attemptAuthentication&lt;/tt&gt;
+   *                   method.
+   * @throws IOException
+   * @throws ServletException
+   */
+  protected void successfulAuthentication(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          FilterChain chain,
+                                          Authentication authResult)
+          throws IOException, ServletException {
+  }
+</code></pre>
+
+<ul>
+<li>认证失败方法</li>
+</ul>
+
+<pre><code class="language-java">  /**
+   * Default behaviour for unsuccessful authentication.
+   * &lt;ol&gt;
+   * &lt;li&gt;Clears the {@link SecurityContextHolder}&lt;/li&gt;
+   * &lt;li&gt;Stores the exception in the session (if it exists or
+   * &lt;tt&gt;allowSesssionCreation&lt;/tt&gt; is set to &lt;tt&gt;true&lt;/tt&gt;)&lt;/li&gt;
+   * &lt;li&gt;Informs the configured &lt;tt&gt;RememberMeServices&lt;/tt&gt; of the failed login&lt;/li&gt;
+   * &lt;li&gt;Delegates additional behaviour to the {@link AuthenticationFailureHandler}.&lt;/li&gt;
+   * &lt;/ol&gt;
+   */
+  protected void unsuccessfulAuthentication(HttpServletRequest request,
+        HttpServletResponse response, AuthenticationException failed)
+        throws IOException, ServletException {
+  }
+</code></pre>
+
+<p>​        2、创建一个类实现<strong>UserDetailService</strong>接口，并实现数据库查询用户名和密码的过程，返回SpringSecurity提供的User对象。</p>
+
+<pre><code class="language-java">public interface UserDetailsService {
+   UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+}
+</code></pre>
+
+<h1 id="三-springsecurity使用">三、SpringSecurity使用</h1>
+
+<h2 id="3-1-springsecurity认证-配置方式">3.1、SpringSecurity认证 配置方式</h2>
+
+<ul>
+<li><strong>简介</strong></li>
+</ul>
+
+<blockquote>
+<p>SpringSecurity 提供了3中认证方式，其中包括配置类、配置文件、接口实现这三种方式的优先级为配置类  &gt; 配置文件 &gt; 接口实现，其中接口实现方式比较常用。</p>
+</blockquote>
+
+<ul>
+<li><strong>配置文件方式</strong></li>
+</ul>
+
+<blockquote>
+<p>这种不实用，适合只有系统只有一个用户</p>
+
+<pre><code class="language-java">rver.port=8081
+spring.security.user.name=gzk
+spring.security.user.password=1234
+</code></pre>
+</blockquote>
+
+<ul>
+<li><strong>通过配置类</strong></li>
+</ul>
+
+<blockquote>
+<p>这种方式将用户名和密码保存在服务器内存中</p>
+
+<pre><code class="language-java">@Configuration
+public class MySecurityConfig extends WebSecurityConfigurerAdapter {
+
+   @Override
+   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+       //密码加密
+       BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+       String password = bCryptPasswordEncoder.encode(&quot;1234&quot;);
+       //设置用户和密码到内存中
+      auth.inMemoryAuthentication().withUser(&quot;admin&quot;).password(password).roles(&quot;admin&quot;);
+   }
+
+   /**
+    * 容器中放入密码加密器
+    *
+    * @return 密码加密器
+    */
+   @Bean
+   PasswordEncoder passwordEncoder() {
+       return new BCryptPasswordEncoder();
+   }
+}
+</code></pre>
+</blockquote>
+
+<ul>
+<li><strong>自定义编写实现类UserDetailService</strong></li>
+</ul>
+
+<blockquote>
+<p>1、创建一个配置类：设置使用那个userDetailService实现类</p>
+
+<pre><code class="language-java">@Configuration
+public class SecurityConfigTest extends WebSecurityConfigurerAdapter {
+
+   @Autowired
+   private UserDetailsService userDetailsService;
+
+   @Override
+   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+       //设置使用那个UserDetailService实现类
+       auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+   }
+
+   /**
+    * There is no PasswordEncoder mapped for the id &quot;null&quot;
+    * 容器中放入密码加密器
+    *
+    * @return 密码加密器
+    */
+   @Bean
+   PasswordEncoder passwordEncoder() {
+       return new BCryptPasswordEncoder();
+   }
+}
+</code></pre>
+
+<p>2、编写userDetailService实现类，返回User对象，user对象有用户名和密码和操作权限</p>
+
+<pre><code class="language-java">@Service(&quot;userDetailsService&quot;)
+public class MyUserDetailService implements UserDetailsService {
+
+   @Autowired
+   private UserMapper userMapper;
+
+   @Override
+   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+       //数据库查询用户信息
+       Users users = userMapper.selectOne(new QueryWrapper&lt;Users&gt;().eq(&quot;username&quot;, username));
+       //判断
+       if (users == null) {
+           throw new UsernameNotFoundException(&quot;用户名不存在&quot;);
+       } else {
+           List&lt;GrantedAuthority&gt; authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(&quot;admin&quot;);
+           return new User(users.getUsername(), new BCryptPasswordEncoder().encode(users.getPassword()), authorities);
+       }
+   }
+}
+</code></pre>
+</blockquote>
+
+<h2 id="3-2-自定义登录页面">3.2、自定义登录页面</h2>
+
+<blockquote>
+<p>1、在配置类中配置相关信息</p>
+
+<pre><code class="language-java">@Configuration
+public class SecurityConfigTest extends WebSecurityConfigurerAdapter {
+
+   @Autowired
+   private UserDetailsService userDetailsService;
+
+   @Override
+   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+       //设置使用那个UserDetailService实现类
+       auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+   }
+
+
+   /**
+    * 自定登录页面已经权限设置
+    * @param http
+    * @throws Exception
+    */
+   @Override
+   protected void configure(HttpSecurity http) throws Exception {
+       //登录设置
+       http.formLogin()
+               //自定义自己登录页面
+               .loginPage(&quot;/login/html&quot;)
+               //登录访问路径
+               .loginProcessingUrl(&quot;/user/login&quot;)
+               //登录成功跳转路径
+               .defaultSuccessUrl(&quot;/test/index&quot;).permitAll()
+               .and().authorizeRequests()
+               //设置那些路径不需要认证，可以直击访问
+               .antMatchers(&quot;/&quot;, &quot;/test/hello&quot;, &quot;/user/login&quot;).permitAll()
+               .anyRequest().authenticated()
+               //关闭csrf防护
+               .and().csrf().disable()
+       ;
+   }
+
+   /**
+    * There is no PasswordEncoder mapped for the id &quot;null&quot;
+    * 容器中放入密码加密器
+    *
+    * @return 密码加密器
+    */
+   @Bean
+   PasswordEncoder passwordEncoder() {
+       return new BCryptPasswordEncoder();
+   }
+}
+</code></pre>
+</blockquote>
+
+<h2 id="3-3-基于角色或权限的访问控制">3.3、基于角色或权限的访问控制</h2>
+
+<p><strong>1、hasAuthority方法</strong></p>
+
+<blockquote>
+<p>当前主体具有指定权限的话返回true否则返回false；</p>
+
+<blockquote>
+<ol>
+<li>在配置类型中设置当前访问地址有哪些权限</li>
+</ol>
+
+<pre><code class="language-java">//当前登录用户，只有具备admins权限才能访问这个路径
+.antMatchers(&quot;/test/index&quot;).hasAuthority(&quot;admins&quot;)
+</code></pre>
+
+<ol>
+<li>在UserDetailService中返回的user对象设置权限</li>
+</ol>
+
+<pre><code class="language-java">List&lt;GrantedAuthority&gt; authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(&quot;admins&quot;);
+return new User(users.getUsername(), new BCryptPasswordEncoder().encode(users.getPassword()), authorities);
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211415274.png" alt="image-20230621141502271" /></p>
+
+<p><img src="C:/Users/FruitCode/AppData/Roaming/Typora/typora-user-images/image-20230621141612287.png" alt="image-20230621141612287" /></p>
+</blockquote>
+</blockquote>
+
+<p><strong>2、hasAnyAuthority方法</strong></p>
+
+<blockquote>
+<p>针对多个权限，登录用户只要有其中任意一个权限即可访问。</p>
+
+<pre><code class="language-java">//登录用户只要有其中一种权限即可访问这个路径
+.antMatchers(&quot;/test/index&quot;).hasAnyAuthority(&quot;admins,manager&quot;)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211423296.png" alt="image-20230621142314214" /></p>
+</blockquote>
+
+<p><strong>3、hasRole方法</strong></p>
+
+<blockquote>
+<p>针对单个权限，登录用户必须具备该角色才能访问。</p>
+
+<pre><code class="language-java">//登录用户必须具备该角色才能访问权限
+.antMatchers(&quot;/test/index&quot;).hasRole(&quot;sale&quot;)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211424754.png" alt="image-20230621142450889" /></p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211425640.png" alt="image-20230621142508460" /></p>
+</blockquote>
+
+<p><strong>4、hasAnyRole方法</strong></p>
+
+<blockquote>
+<p>只具有其中一个角色就能访问该路径，与hasAnyAuthority同理。</p>
+</blockquote>
+
+<h2 id="3-4-自定义403页面">3.4、自定义403页面</h2>
+
+<blockquote>
+<p>在配置类中配置</p>
+
+<pre><code class="language-java">@Override
+protected void configure(HttpSecurity http) throws Exception {
+//设置没有权限时跳转地址
+http.exceptionHandling().accessDeniedPage(&quot;/NoAuth.html&quot;);
+</code></pre>
+</blockquote>
+
+<h1 id="三-springsecurity使用-1">三、SpringSecurity使用</h1>
+
+<h2 id="3-1-springsecurity认证-配置方式-1">3.1、SpringSecurity认证 配置方式</h2>
+
+<ul>
+<li><strong>简介</strong></li>
+</ul>
+
+<blockquote>
+<p>SpringSecurity 提供了3中认证方式，其中包括配置类、配置文件、接口实现这三种方式的优先级为配置类  &gt; 配置文件 &gt; 接口实现，其中接口实现方式比较常用。</p>
+</blockquote>
+
+<ul>
+<li><strong>配置文件方式</strong></li>
+</ul>
+
+<blockquote>
+<p>这种不实用，适合只有系统只有一个用户</p>
+
+<pre><code class="language-properties">rver.port=8081
+spring.security.user.name=gzk
+spring.security.user.password=1234
+</code></pre>
+</blockquote>
+
+<ul>
+<li><strong>通过配置类</strong></li>
+</ul>
+
+<blockquote>
+<p>这种方式将用户名和密码保存在服务器内存中</p>
+
+<pre><code class="language-java">@Configuration
+public class MySecurityConfig extends WebSecurityConfigurerAdapter {
+
+@Override
+protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//密码加密
+BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+String password = bCryptPasswordEncoder.encode(&quot;1234&quot;);
+//设置用户和密码到内存中
+auth.inMemoryAuthentication().withUser(&quot;admin&quot;).password(password).roles(&quot;admin&quot;);
+}
+
+/**
+  * 容器中放入密码加密器
+  *
+  * @return 密码加密器
+  */
+ @Bean
+ PasswordEncoder passwordEncoder() {
+     return new BCryptPasswordEncoder();
+ }
+}
+</code></pre>
+</blockquote>
+
+<ul>
+<li><strong>自定义编写实现类UserDetailService</strong></li>
+</ul>
+
+<blockquote>
+<p>1、创建一个配置类：设置使用那个userDetailService实现类</p>
+
+<pre><code class="language-java">@Configuration
+public class SecurityConfigTest extends WebSecurityConfigurerAdapter {
+
+@Autowired
+private UserDetailsService userDetailsService;
+
+@Override
+protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//设置使用那个UserDetailService实现类
+auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+}
+
+/**
+  * There is no PasswordEncoder mapped for the id &quot;null&quot;
+  * 容器中放入密码加密器
+  *
+  * @return 密码加密器
+  */
+ @Bean
+ PasswordEncoder passwordEncoder() {
+     return new BCryptPasswordEncoder();
+ }
+}
+</code></pre>
+
+<p>2、编写userDetailService实现类，返回User对象，user对象有用户名和密码和操作权限</p>
+
+<pre><code class="language-java">@Service(&quot;userDetailsService&quot;)
+public class MyUserDetailService implements UserDetailsService {
+
+ @Autowired
+ private UserMapper userMapper;
+
+ @Override
+ public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+     //数据库查询用户信息
+     Users users = userMapper.selectOne(new QueryWrapper&lt;Users&gt;().eq(&quot;username&quot;, username));
+     //判断
+     if (users == null) {
+         throw new UsernameNotFoundException(&quot;用户名不存在&quot;);
+     } else {
+         List&lt;GrantedAuthority&gt; authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(&quot;admin&quot;);
+         return new User(users.getUsername(), new BCryptPasswordEncoder().encode(users.getPassword()), authorities);
+     }
+ }
+}
+</code></pre>
+</blockquote>
+
+<h2 id="3-2-自定义登录页面-1">3.2、自定义登录页面</h2>
+
+<blockquote>
+<p>1、在配置类中配置相关信息</p>
+
+<pre><code class="language-java">@Configuration
+public class SecurityConfigTest extends WebSecurityConfigurerAdapter {
+
+@Autowired
+private UserDetailsService userDetailsService;
+
+@Override
+protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//设置使用那个UserDetailService实现类
+auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+}
+
+
+/**
+  * 自定登录页面已经权限设置
+  * @param http
+  * @throws Exception
+  */
+ @Override
+ protected void configure(HttpSecurity http) throws Exception {
+     //登录设置
+     http.formLogin()
+             //自定义自己登录页面
+             .loginPage(&quot;/login/html&quot;)
+             //登录访问路径
+             .loginProcessingUrl(&quot;/user/login&quot;)
+             //登录成功跳转路径
+             .defaultSuccessUrl(&quot;/test/index&quot;).permitAll()
+             .and().authorizeRequests()
+             //设置那些路径不需要认证，可以直击访问
+             .antMatchers(&quot;/&quot;, &quot;/test/hello&quot;, &quot;/user/login&quot;).permitAll()
+             .anyRequest().authenticated()
+             //关闭csrf防护
+             .and().csrf().disable()
+     ;
+ }
+
+ /**
+  * There is no PasswordEncoder mapped for the id &quot;null&quot;
+  * 容器中放入密码加密器
+  *
+  * @return 密码加密器
+  */
+ @Bean
+ PasswordEncoder passwordEncoder() {
+     return new BCryptPasswordEncoder();
+ }
+}
+</code></pre>
+</blockquote>
+
+<h2 id="3-3-基于角色或权限的访问控制-1">3.3、基于角色或权限的访问控制</h2>
+
+<p><strong>1、hasAuthority方法</strong></p>
+
+<blockquote>
+<p>当前主体具有指定权限的话返回true否则返回false；</p>
+
+<blockquote>
+<ol>
+<li>在配置类型中设置当前访问地址有哪些权限</li>
+</ol>
+
+<pre><code class="language-java">//当前登录用户，只有具备admins权限才能访问这个路径
+.antMatchers(&quot;/test/index&quot;).hasAuthority(&quot;admins&quot;)
+</code></pre>
+
+<ol>
+<li>在UserDetailService中返回的user对象设置权限</li>
+</ol>
+
+<pre><code class="language-java">List&lt;GrantedAuthority&gt; authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(&quot;admins&quot;);
+return new User(users.getUsername(), new BCryptPasswordEncoder().encode(users.getPassword()), authorities);
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211415274.png" alt="image-20230621141502271" /></p>
+
+<p><img src="C:/Users/FruitCode/AppData/Roaming/Typora/typora-user-images/image-20230621141612287.png" alt="image-20230621141612287" /></p>
+</blockquote>
+</blockquote>
+
+<p><strong>2、hasAnyAuthority方法</strong></p>
+
+<blockquote>
+<p>针对多个权限，登录用户只要有其中任意一个权限即可访问。</p>
+
+<pre><code class="language-java">//登录用户只要有其中一种权限即可访问这个路径
+.antMatchers(&quot;/test/index&quot;).hasAnyAuthority(&quot;admins,manager&quot;)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211423296.png" alt="image-20230621142314214" /></p>
+</blockquote>
+
+<p><strong>3、hasRole方法</strong></p>
+
+<blockquote>
+<p>针对单个权限，登录用户必须具备该角色才能访问。</p>
+
+<pre><code class="language-java">//登录用户必须具备该角色才能访问权限
+.antMatchers(&quot;/test/index&quot;).hasRole(&quot;sale&quot;)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211424754.png" alt="image-20230621142450889" /></p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211425640.png" alt="image-20230621142508460" /></p>
+</blockquote>
+
+<p><strong>4、hasAnyRole方法</strong></p>
+
+<blockquote>
+<p>只具有其中一个角色就能访问该路径，与hasAnyAuthority同理。</p>
+</blockquote>
+
+<h2 id="3-4-自定义403页面-1">3.4、自定义403页面</h2>
+
+<blockquote>
+<p>在配置类中配置</p>
+
+<pre><code class="language-java">@Override
+protected void configure(HttpSecurity http) throws Exception {
+//设置没有权限时跳转地址
+http.exceptionHandling().accessDeniedPage(&quot;/NoAuth.html&quot;);
+</code></pre>
+</blockquote>
+
+<h2 id="3-5-注解的使用">3.5、注解的使用</h2>
+
+<h3 id="3-5-1-secured">3.5.1、@Secured</h3>
+
+<blockquote>
+<ol>
+<li>启动类开启下面配置</li>
+</ol>
+
+<pre><code class="language-java">@EnableGlobalMethodSecurity(securedEnabled = true)
+</code></pre>
+
+<ol>
+<li>判断登录用户是否具有此角色，只有具有该角色才可以访问。另外需要注意的是这里匹配的字符串需要添加&rdquo;ROLE_&ldquo;前缀.</li>
+</ol>
+
+<pre><code class="language-java">/**
+* 用户必须具有sale或者manager角色才可以访问
+*/
+@Secured(value = {&quot;ROLE_sale&quot;,&quot;ROLE_manager&quot;})
+@GetMapping(&quot;/update&quot;)
+public String update(){
+ return &quot;我是 update&quot;;
+}
+</code></pre>
+</blockquote>
+
+<h3 id="3-5-2-preauthorize">3.5.2、@PreAuthorize</h3>
+
+<blockquote>
+<ol>
+<li>启动类开启下面配置</li>
+</ol>
+
+<pre><code class="language-java">@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
+</code></pre>
+
+<ol>
+<li>进入方法前验证</li>
+</ol>
+
+<pre><code class="language-java">@PreAuthorize(value = &quot;hasAnyAuthority('admins')&quot;)
+@GetMapping(&quot;/update&quot;)
+public String update(){
+ return &quot;我是 update&quot;;
+}
+</code></pre>
+</blockquote>
+
+<h3 id="3-5-3-postauthorize">3.5.3、@PostAuthorize</h3>
+
+<blockquote>
+<ol>
+<li>启动类开启下面配置</li>
+</ol>
+
+<pre><code class="language-java">@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
+</code></pre>
+
+<ol>
+<li>方法之后验证</li>
+</ol>
+
+<pre><code class="language-java">@PostAuthorize(value = &quot;hasAnyAuthority('admins')&quot;)
+@GetMapping(&quot;/update&quot;)
+public String update(){
+ System.out.println(&quot;我是 update&quot;);
+ return &quot;我是 update&quot;;
+}
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211439084.png" alt="image-20230621143908228" /></p>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211439596.png" alt="image-20230621143922705" /></p>
+
+<p>说明确实对没有权限的用户拦截了返回值。</p>
+</blockquote>
+
+<h3 id="3-5-4-postfilter">3.5.4、@PostFilter</h3>
+
+<blockquote>
+<p>与SPEL表达式配合对返回的数据进行过滤</p>
+</blockquote>
+
+<h3 id="3-5-5-pretfilter">3.5.5、@PretFilter</h3>
+
+<blockquote>
+<p>与SPEL表达式配置，在进入控制器前多参数过滤</p>
+</blockquote>
+
+<h2 id="3-6-用户注销">3.6、用户注销</h2>
+
+<blockquote>
+<p>在配置类中配置</p>
+
+<pre><code class="language-java">//设置注销
+http.logout().logoutUrl(&quot;/logout&quot;).logoutSuccessUrl(&quot;/test/hello&quot;).permitAll();
+</code></pre>
+</blockquote>
+
+<h2 id="3-7-基于数据实现自动登录-记住我">3.7、基于数据实现自动登录（记住我）</h2>
+
+<blockquote>
+<ul>
+<li>1、整体流程</li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306211446736.png" alt="image-20230621144217843" /></p>
+
+<ul>
+<li>2、创建数据库表（默认框架可以帮我们创建）</li>
+</ul>
+
+<pre><code class="language-SQL"> CREATE TABLE persistent_logins (
+     username VARCHAR (64) NOT NULL,
+     series VARCHAR (64) PRIMARY KEY,
+     token VARCHAR (64) NOT NULL,
+     last_used TIMESTAMP NOT NULL
+ )
+</code></pre>
+
+<ul>
+<li>3、修改配置类</li>
+</ul>
+
+<pre><code class="language-java"> @Autowired
+ private DataSource dataSource;
+ 
+ @Bean
+ public PersistentTokenRepository persistentTokenRepository(){
+     JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+     jdbcTokenRepository.setDataSource(dataSource);
+     //启动的时候自动创建表
+     //jdbcTokenRepository.setCreateTableOnStartup(true);
+     return jdbcTokenRepository;
+ }
+</code></pre>
+
+<pre><code class="language-java"> .and().rememberMe().tokenRepository(persistentTokenRepository())
+ //设置有效时长
+ .tokenValiditySeconds(60)
+ //设置用户服务
+ .userDetailsService(userDetailsService)
+</code></pre>
+</blockquote>
+
+<h2 id="3-8-跨域">3.8、跨域</h2>
+
+<blockquote>
+<p>跨站请求伪造。</p>
+
+<p>从 Spring Security 4.0 开始，默认情况下会启用 CSRF 保护，以防止 CSRF 攻击应用程序，Spring Security CSRF 会针对 PATCH，POST，PUT 和 DELETE 方法进行防护</p>
+</blockquote>
+
+<p><img src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306212156846.png" alt="image-20230621215610967" /></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

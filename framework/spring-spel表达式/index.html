@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <title>Spring Spel表达式 // 果汁康</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.54.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="果汁康" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.0fb49e70a30412f97ddfc418e18fefef1d9fcdebe45f634dbbba768b00fe1eec.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spring Spel表达式"/>
+<meta name="twitter:description" content="1、spel表达式简介 Spring表达式语言(简称“SpEL”)是一种功能强大的表达式语言，支持在运行时查询和操作对象图。 语言语法类似于Unified EL，但提供了额外的功能，最显著的是方法调用和基本的字符串模板功能。
+2、测试环境搭建 1、环境 java8 &#43; maven
+2、搭建 1、maven导入spel表达式所有的jar包
+&lt;dependency&gt; &lt;groupId&gt;org.springframework&lt;/groupId&gt; &lt;artifactId&gt;spring-expression&lt;/artifactId&gt; &lt;version&gt;5.2.12.RELEASE&lt;/version&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework&lt;/groupId&gt; &lt;artifactId&gt;spring-context&lt;/artifactId&gt; &lt;version&gt;5.2.12.RELEASE&lt;/version&gt; &lt;/dependency&gt;  3、Spel表达式解析 1、单引号表示字符串字面值 /** * 使用单引号表示字符串字面值 */ private static void stringConstTest() { /*负责解析表达式的接口*/ ExpressionParser parser = new SpelExpressionParser(); /*使用单引号表示字符串字面值*/ String expression = &quot;&#39;Hello World&#39;&quot;; Expression exp = parser.parseExpression(expression); String message = (String) exp.getValue(); /*结果为：Hello World */ System.out.println(message); }  String expression = &ldquo;&lsquo;Hello World&rsquo;&rdquo;; 为Spel表达式，其中使用单引号表示字符串字面值。
+2、使用spel调用方法 /** * spel调用方法 */ private static void callMethodTest() { /*负责解析表达式的接口*/ ExpressionParser parser = new SpelExpressionParser(); /*调用字符串的concat方法*/ Expression exp = parser."/>
+
+    <meta property="og:title" content="Spring Spel表达式" />
+<meta property="og:description" content="1、spel表达式简介 Spring表达式语言(简称“SpEL”)是一种功能强大的表达式语言，支持在运行时查询和操作对象图。 语言语法类似于Unified EL，但提供了额外的功能，最显著的是方法调用和基本的字符串模板功能。
+2、测试环境搭建 1、环境 java8 &#43; maven
+2、搭建 1、maven导入spel表达式所有的jar包
+&lt;dependency&gt; &lt;groupId&gt;org.springframework&lt;/groupId&gt; &lt;artifactId&gt;spring-expression&lt;/artifactId&gt; &lt;version&gt;5.2.12.RELEASE&lt;/version&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework&lt;/groupId&gt; &lt;artifactId&gt;spring-context&lt;/artifactId&gt; &lt;version&gt;5.2.12.RELEASE&lt;/version&gt; &lt;/dependency&gt;  3、Spel表达式解析 1、单引号表示字符串字面值 /** * 使用单引号表示字符串字面值 */ private static void stringConstTest() { /*负责解析表达式的接口*/ ExpressionParser parser = new SpelExpressionParser(); /*使用单引号表示字符串字面值*/ String expression = &quot;&#39;Hello World&#39;&quot;; Expression exp = parser.parseExpression(expression); String message = (String) exp.getValue(); /*结果为：Hello World */ System.out.println(message); }  String expression = &ldquo;&lsquo;Hello World&rsquo;&rdquo;; 为Spel表达式，其中使用单引号表示字符串字面值。
+2、使用spel调用方法 /** * spel调用方法 */ private static void callMethodTest() { /*负责解析表达式的接口*/ ExpressionParser parser = new SpelExpressionParser(); /*调用字符串的concat方法*/ Expression exp = parser." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fruitkang.github.io/framework/spring-spel%E8%A1%A8%E8%BE%BE%E5%BC%8F/" />
+<meta property="article:published_time" content="2023-06-20T22:12:50&#43;08:00"/>
+<meta property="article:modified_time" content="2023-06-20T22:12:50&#43;08:00"/>
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://fruitkang.github.io/"><img class="app-header-avatar"  src="/11.png" alt="果汁康" /></a>
+      <span style="color: #00cf8f;" class="app-header-title"><img style="vertical-align:middle;size: inherit;" src="https://raw.githubusercontent.com/fruitkang/picgo/main/202306210244464.png"/> 果汁康</span>
+      
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">全部</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/works">工作</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/books">读书推荐</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/mysql">MySQL</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/java">Java</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/framework">框架</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/redis">Redis</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/nginx">Nignx</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/tools">小工具</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/linux">Linux</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/docker">Docker</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/others">Others</a>
+      </nav>
+        
+      <p style="color: #00cf8f;line-height: normal;text-align: center;">
+        赤色的旗帜一定会在全球飘扬!!!
+      </p>
+
+      <p style="font-size: small;">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+            <title>Github</title>
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span>
+            本站所有图片都来自于Github，如遇图片丢失，请自行解决！
+            
+          </span>
+          
+        </span>
+      </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/fruitkang" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Spring Spel表达式</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 20, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          8 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://fruitkang.github.io/tags/framework/">Framework</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      
+
+<h1 id="1-spel表达式简介">1、spel表达式简介</h1>
+
+<p>Spring表达式语言(简称“SpEL”)是一种功能强大的表达式语言，支持在运行时查询和操作对象图。 语言语法类似于Unified EL，但提供了额外的功能，最显著的是方法调用和基本的字符串模板功能。</p>
+
+<h1 id="2-测试环境搭建">2、测试环境搭建</h1>
+
+<h2 id="1-环境">1、环境</h2>
+
+<p>java8 + maven</p>
+
+<h2 id="2-搭建">2、搭建</h2>
+
+<p>1、maven导入spel表达式所有的jar包</p>
+
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-expression&lt;/artifactId&gt;
+    &lt;version&gt;5.2.12.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+    &lt;version&gt;5.2.12.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<h1 id="3-spel表达式解析">3、Spel表达式解析</h1>
+
+<h2 id="1-单引号表示字符串字面值">1、单引号表示字符串字面值</h2>
+
+<pre><code class="language-java">/**
+ * 使用单引号表示字符串字面值
+ */
+private static void stringConstTest() {
+    /*负责解析表达式的接口*/
+    ExpressionParser parser = new SpelExpressionParser();
+    /*使用单引号表示字符串字面值*/
+    String expression = &quot;'Hello World'&quot;;
+    Expression exp = parser.parseExpression(expression);
+    String message = (String) exp.getValue();
+    /*结果为：Hello World */
+    System.out.println(message);
+}
+</code></pre>
+
+<p>String expression = &ldquo;&lsquo;Hello World&rsquo;&rdquo;;
+为Spel表达式，其中使用单引号表示字符串字面值。</p>
+
+<h2 id="2-使用spel调用方法">2、使用spel调用方法</h2>
+
+<pre><code class="language-java">/**
+ * spel调用方法
+ */
+private static void callMethodTest() {
+    /*负责解析表达式的接口*/
+    ExpressionParser parser = new SpelExpressionParser();
+    /*调用字符串的concat方法*/
+    Expression exp = parser.parseExpression(&quot;'Hello World'.concat(' good nice')&quot;);
+    String message = (String) exp.getValue();
+    /*结果为：Hello World good nice*/
+    System.out.println(message);
+}
+</code></pre>
+
+<p>&rdquo;&lsquo;Hello World&rsquo;.concat(&rsquo; good nice&rsquo;)&rdquo; 为spel表达式，其中使用了String方法的concat方法，使用英文点[.]进行调用。</p>
+
+<p>&rdquo;&lsquo;Hello World&rsquo;.concat(&rsquo; good nice&rsquo;)&rdquo; ===&gt; &ldquo;Hello World&rdquo;.concaat(&rdquo; good nice&rdquo;)</p>
+
+<h2 id="3-通过get方法访问属性">3、通过get方法访问属性</h2>
+
+<pre><code class="language-java">/**
+ * 访问属性
+ */
+private static void callingProperty() {
+    /*负责解析表达式的接口*/
+    ExpressionParser parser = new SpelExpressionParser();
+    /*调用getBytes方法访问属性*/
+    Expression exp = parser.parseExpression(&quot;'Hello'.bytes&quot;);
+    byte[] bytes = (byte[]) exp.getValue();
+    /*结果为：Hello World good nice*/
+    for (byte item : bytes) {
+        System.out.println(item);
+    }
+}
+</code></pre>
+
+<p>&rdquo;&lsquo;Hello&rsquo;.bytes&rdquo;为el表达式，其中bytes为String的一个属性，在此处通过get方法访问属性。</p>
+
+<p>&rdquo;&lsquo;Hello&rsquo;.bytes&rdquo; ===&gt; Hello.getBytes()</p>
+
+<h2 id="5-通过标准点表示法支持嵌套属性-包括私有属性-通过get方法-和public属性">5、通过标准点表示法支持嵌套属性，包括私有属性（通过get方法）和public属性</h2>
+
+<pre><code class="language-java">/**
+ * SpEL还通过使用标准的点表示法(如prop1.prop2.prop3)支持嵌套属性,
+ * 通过标准点表示方法访问属性（通过get方法）和公共属性。
+ */
+private static void standardDotNotation() {
+    /*负责解析表达式的接口*/
+    ExpressionParser parser = new SpelExpressionParser();
+    /*调用getBytes方法访问私有属性,和直接访问length公共属性*/
+    Expression exp = parser.parseExpression(&quot;'Hello'.bytes.length&quot;);
+    Integer length = (Integer) exp.getValue();
+    System.out.println(length);
+}
+</code></pre>
+
+<p>&rdquo;&lsquo;Hello&rsquo;.bytes.length&rdquo;为spel表达式，通过 . 来支持循环嵌套，包括访问私有属性（通过get方法）和public属性。</p>
+
+<p>&rdquo;&lsquo;Hello&rsquo;.bytes.length&rdquo; ===》 “Hello”.getBytes().length</p>
+
+<h2 id="6-调用构造器">6、调用构造器</h2>
+
+<pre><code class="language-java">/**
+ * 调用构造器
+ */
+private static  void callConstructor (){
+    /*负责解析表达式的接口*/
+    ExpressionParser parser = new SpelExpressionParser();
+    /*调用getBytes方法访问私有属性,和直接访问length公共属性*/
+    Expression exp = parser.parseExpression(&quot;new String('hello world').toUpperCase()&quot;);
+    String msg = (String) exp.getValue();
+    System.out.println(msg);
+}
+</code></pre>
+
+<p>&ldquo;new String(&lsquo;hello world&rsquo;).toUpperCase()&ldquo;，先调用String的构造器然后使用.调用String方法的。</p>
+
+<h2 id="7-设置根对象-并从根对象中解析数据">7、设置根对象，并从根对象中解析数据</h2>
+
+<pre><code class="language-java">/**
+ * SpEL更常见的用法是提供一个表达式字符串，根据特定的对象实例(称为根对象)求值。
+ * 下面的例子展示了如何从student类的实例中检索name属性或创建一个布尔条件:
+ */
+private static void rootClass() {
+    /*根对象*/
+    Student student = new Student(&quot;XiaoMing&quot;, new Date(), &quot;Serbian&quot;);
+    //解析器对象
+    ExpressionParser parser = new SpelExpressionParser();
+    //表达式
+    Expression exp = parser.parseExpression(&quot;name&quot;);
+    /*指定从根对象 student 解析获取数据*/
+    String name = exp.getValue(student, String.class);
+    System.out.println(&quot;name:&quot; + name);
+    
+    /*通过==进行判断云运算*/
+    exp = parser.parseExpression(&quot;name == 'XiaoMing'&quot;);
+    boolean result = exp.getValue(student, Boolean.class);
+    System.out.println(result);
+}
+</code></pre>
+
+<p>exp.getValue(student, String.class);
+根据指定的根对象计算el表达式。</p>
+
+<h1 id="3-上下文evaluationcontext">3、上下文EvaluationContext</h1>
+
+<h2 id="1-简介">1、简介</h2>
+
+<p>EvaluationContext接口用于计算表达式来解析属性、方法或字段，并帮助执行类型转换。Spring提供了两种实现。SimpleEvaluationContext 和 StandardEvaluationContext。</p>
+
+<ul>
+<li><p>SimpleEvaluationContext ：提供了基本SpEL语言特性和配置选项的子集，用于不需要全部SpEL语言语法的表达式类别，并且应该对它们进行有意义的限制。</p></li>
+
+<li><p>StandardEvaluationContext：展示完整的SpEL语言特性和配置选项。您可以使用它指定一个默认根对象，并配置每个可用的与求值相关的策略</p></li>
+</ul>
+
+<h2 id="2-simpleevaluationcontext">2、SimpleEvaluationContext</h2>
+
+<p>SimpleEvaluationContext被设计成只支持SpEL语言语法的一个子集。它排除了Java类型引用、构造函数和bean引用。它还要求您明确地选择对表达式中的属性和方法的支持级别。默认情况下，create()静态工厂方法只允许对属性的读访问。您还可以获取一个构建器来配置所需的精确支持级别，针对以下一个或一些组合</p>
+
+<ol>
+<li><p>仅自定义PropertyAccessor(无反射)</p></li>
+
+<li><p>用于只读访问的数据绑定属性</p></li>
+
+<li><p>用于读写的数据绑定属性</p></li>
+</ol>
+
+<h2 id="3-类型转换器type-conversion">3、类型转换器Type Conversion</h2>
+
+<p>默认情况下，SpEL使用Spring core中的转换服务(org.springframework.core.convert. converonservice)。此转换服务提供了许多用于公共转换的内置转换器，但它也是完全可扩展的，因此您可以添加类型之间的自定义转换。此外，它是泛型感知的。这意味着，当您在表达式中使用泛型类型时，SpEL试图通过转换来维护它遇到的任何对象的类型正确性。假设使用setValue()来设置一个List属性。属性的类型实际上是List<Boolean>。SpEL认识到，列表中的元素在放入之前需要转换为布尔值。</p>
+
+<pre><code class="language-java">public static void typeConversion() {
+    //解析器对象
+    ExpressionParser parser = new SpelExpressionParser();
+    Simple simple = new Simple();
+    simple.getBooleanList().add(true);
+    /*上下文*/
+    EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+    /*给上下文容器中的根对象simple设置值为false
+    * 会自动根据泛型的类型将字符串false转换为Boolean类型*/
+    parser.parseExpression(&quot;booleanList[0]&quot;).setValue(context, simple, &quot;false&quot;);
+    Boolean result = simple.getBooleanList().get(0);
+    System.out.println(result);
+}
+</code></pre>
+
+<h1 id="4-spel的使用方式">4、SpEL的使用方式</h1>
+
+<h2 id="1-字面值表达式">1、字面值表达式</h2>
+
+<p>支持的字面值表达式类型有字符串、数值(int、real、hex)、布尔值和空值。字符串由单引号分隔。要在字符串中放置单引号本身，请使用两个单引号字符。</p>
+
+<pre><code class="language-java">ExpressionParser parser = new SpelExpressionParser();
+
+// evals to &quot;Hello World&quot;
+String helloWorld = (String) parser.parseExpression(&quot;'Hello World'&quot;).getValue();
+
+double avogadrosNumber = (Double) parser.parseExpression(&quot;6.0221415E+23&quot;).getValue();
+
+// evals to 2147483647
+int maxValue = (Integer) parser.parseExpression(&quot;0x7FFFFFFF&quot;).getValue();
+
+boolean trueValue = (Boolean) parser.parseExpression(&quot;true&quot;).getValue();
+
+Object nullValue = parser.parseExpression(&quot;null&quot;).getValue();
+
+</code></pre>
+
+<h2 id="2-属性-数组-列表-映射和索引器">2、属性、数组、列表、映射和索引器</h2>
+
+<h3 id="1-使用英文句号来指示嵌套的属性">1、使用英文句号来指示嵌套的属性。</h3>
+
+<pre><code class="language-java">// evals to 1856
+int year = (Integer) parser.parseExpression(&quot;birthdate.year + 1900&quot;).getValue(context);
+
+String city = (String) parser.parseExpression(&quot;placeOfBirth.city&quot;).getValue(context);
+</code></pre>
+
+<p><strong>允许属性名称的首字母不区分大小写</strong>。因此，上面例子中的表达式可以写成Birthdate。年份+ 1900和出生地点。城市,分别。此外，<strong>属性也可以通过方法调用来访问</strong>——例如，getPlaceOfBirth(). getcity()而不是placeOfBirth.city。</p>
+
+<h3 id="2-数组和列表-数组和列表的内容使用方括号-表示法获取">2、数组和列表:数组和列表的内容使用方括号[]表示法获取</h3>
+
+<pre><code class="language-java">ExpressionParser parser = new SpelExpressionParser();
+EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+
+// Inventions Array
+
+// evaluates to &quot;Induction motor&quot;
+String invention = parser.parseExpression(&quot;inventions[3]&quot;).getValue(
+        context, tesla, String.class);
+
+// Members List
+
+// evaluates to &quot;Nikola Tesla&quot;
+String name = parser.parseExpression(&quot;members[0].name&quot;).getValue(
+        context, ieee, String.class);
+
+// List and Array navigation
+// evaluates to &quot;Wireless communication&quot;
+String invention = parser.parseExpression(&quot;members[0].inventions[6]&quot;).getValue(
+        context, ieee, String.class);
+</code></pre>
+
+<h3 id="3-map-通过在括号中指定字面值键值来获取映射的内容">3、Map:通过在括号中指定字面值键值来获取映射的内容</h3>
+
+<pre><code class="language-java">// Officer's Dictionary
+
+Inventor pupin = parser.parseExpression(&quot;officers['president']&quot;).getValue(
+        societyContext, Inventor.class);
+
+// evaluates to &quot;Idvor&quot;
+String city = parser.parseExpression(&quot;officers['president'].placeOfBirth.city&quot;).getValue(
+        societyContext, String.class);
+
+// setting values
+parser.parseExpression(&quot;officers['advisors'][0].placeOfBirth.country&quot;).setValue(
+        societyContext, &quot;Croatia&quot;);
+</code></pre>
+
+<h2 id="3-内联列表-使用-定义一个列表">3、内联列表：使用{}定义一个列表</h2>
+
+<pre><code class="language-java">// evaluates to a Java list containing the four numbers
+List numbers = (List) parser.parseExpression(&quot;{1,2,3,4}&quot;).getValue(context);
+
+List listOfLists = (List) parser.parseExpression(&quot;{{'a','b'},{'x','y'}}&quot;).getValue(context);
+</code></pre>
+
+<p>{}本身意味着一个空列表。出于性能原因，如果列表本身完全由固定字面值组成，则创建一个常量列表来表示表达式(而不是在每次求值时构建一个新列表)。</p>
+
+<h2 id="4-内联映射">4、内联映射</h2>
+
+<pre><code class="language-java">// evaluates to a Java map containing the two entries
+Map inventorInfo = (Map) parser.parseExpression(&quot;{name:'Nikola',dob:'10-July-1856'}&quot;).getValue(context);
+
+Map mapOfMaps = (Map) parser.parseExpression(&quot;{name:{first:'Nikola',last:'Tesla'},dob:{day:10,month:'July',year:1856}}&quot;).getValue(context);
+</code></pre>
+
+<h2 id="5-数组构建">5、数组构建</h2>
+
+<pre><code class="language-java">int[] numbers1 = (int[]) parser.parseExpression(&quot;new int[4]&quot;).getValue(context);
+
+// Array with initializer
+int[] numbers2 = (int[]) parser.parseExpression(&quot;new int[]{1,2,3}&quot;).getValue(context);
+
+// Multi dimensional array
+int[][] numbers3 = (int[][]) parser.parseExpression(&quot;new int[4][5]&quot;).getValue(context);
+</code></pre>
+
+<h2 id="6-调用方法">6、调用方法</h2>
+
+<pre><code class="language-java">// string literal, evaluates to &quot;bc&quot;
+String bc = parser.parseExpression(&quot;'abc'.substring(1, 3)&quot;).getValue(String.class);
+
+// evaluates to true
+boolean isMember = parser.parseExpression(&quot;isMember('Mihajlo Pupin')&quot;).getValue(
+        societyContext, Boolean.class);
+</code></pre>
+
+<h2 id="7-运算符">7、运算符</h2>
+
+<p>Spring Expression Language支持以下几种操作符:</p>
+
+<ol>
+<li><p>关系运算符</p></li>
+
+<li><p>辑运算符</p></li>
+
+<li><p>数学运算符</p></li>
+
+<li><p>赋值运算符</p></li>
+</ol>
+
+<h3 id="1-关系运算符">1、关系运算符</h3>
+
+<pre><code>    使用标准操作符表示法支持关系操作符(等于、不等于、小于、小于或等于、大于和大于或等于)
+
+    对null进行大于或小于的比较遵循一个简单的规则:null被视为空(不是零)。因此，任何其他值总是大于null (X &gt; null总是true)，任何其他值都不小于零(X &lt; null总是false)。如果您更喜欢数字比较，则应避免基于数字的空比较，而倾向于对零进行比较(例如，X &gt; 0或X &lt; 0)。
+</code></pre>
+
+<pre><code class="language-java">// evaluates to true
+boolean trueValue = parser.parseExpression(&quot;2 == 2&quot;).getValue(Boolean.class);
+
+// evaluates to false
+boolean falseValue = parser.parseExpression(&quot;2 &lt; -5.0&quot;).getValue(Boolean.class);
+
+// evaluates to true
+boolean trueValue = parser.parseExpression(&quot;'black' &lt; 'block'&quot;).getValue(Boolean.class);
+</code></pre>
+
+<p>除了标准的关系操作符外，SpEL还支持instanceof和基于正则表达式的匹配操作符。</p>
+
+<pre><code class="language-java">// evaluates to false
+boolean falseValue = parser.parseExpression(
+        &quot;'xyz' instanceof T(Integer)&quot;).getValue(Boolean.class);
+
+// evaluates to true
+boolean trueValue = parser.parseExpression(
+        &quot;'5.00' matches '^-?\\d+(\\.\\d{2})?$'&quot;).getValue(Boolean.class);
+
+// evaluates to false
+boolean falseValue = parser.parseExpression(
+        &quot;'5.0067' matches '^-?\\d+(\\.\\d{2})?$'&quot;).getValue(Boolean.class);
+</code></pre>
+
+<p>使用基元类型时要小心，因为它们会立即封装到它们的包装器类型中。例如，1 instanceof T(int)的计算结果为false，而1 instanceof T(Integer)的计算结果为true。</p>
+
+<ol>
+<li><p><code>lt</code> (<code>&lt;</code>)</p></li>
+
+<li><p><code>gt</code> (<code>&gt;</code>)</p></li>
+
+<li><p><code>le</code> (<code>&lt;=</code>)</p></li>
+
+<li><p><code>ge</code> (<code>&gt;=</code>)</p></li>
+
+<li><p><code>eq</code> (<code>==</code>)</p></li>
+
+<li><p><code>ne</code> (<code>!=</code>)</p></li>
+
+<li><p><code>div</code> (<code>/</code>)</p></li>
+
+<li><p><code>mod</code> (<code>%</code>)</p></li>
+
+<li><p><code>not</code> (<code>!</code>)</p></li>
+</ol>
+
+<h3 id="2-辑运算符">2、辑运算符</h3>
+
+<p>SpEL支持以下逻辑操作符</p>
+
+<ol>
+<li><p><code>and</code> (<code>&amp;&amp;</code>)</p></li>
+
+<li><p><code>or</code> (<code>||</code>)</p></li>
+
+<li><p><code>not</code> (<code>!</code>)</p></li>
+</ol>
+
+<pre><code class="language-java">// evaluates to false
+boolean falseValue = parser.parseExpression(&quot;true and false&quot;).getValue(Boolean.class);
+
+// evaluates to true
+String expression = &quot;isMember('Nikola Tesla') and isMember('Mihajlo Pupin')&quot;;
+boolean trueValue = parser.parseExpression(expression).getValue(societyContext, Boolean.class);
+
+// -- OR --
+
+// evaluates to true
+boolean trueValue = parser.parseExpression(&quot;true or false&quot;).getValue(Boolean.class);
+
+// evaluates to true
+String expression = &quot;isMember('Nikola Tesla') or isMember('Albert Einstein')&quot;;
+boolean trueValue = parser.parseExpression(expression).getValue(societyContext, Boolean.class);
+
+// -- NOT --
+
+// evaluates to false
+boolean falseValue = parser.parseExpression(&quot;!true&quot;).getValue(Boolean.class);
+
+// -- AND and NOT --
+String expression = &quot;isMember('Nikola Tesla') and !isMember('Mihajlo Pupin')&quot;;
+boolean falseValue = parser.parseExpression(expression).getValue(societyContext, Boolean.class);
+
+</code></pre>
+
+<h3 id="3-数学运算符">3、数学运算符</h3>
+
+<p>+、-、*、/、%、^</p>
+
+<p>可以对数字和字符串使用加法操作符(+)。只能对数字使用减法(-)、乘法(*)和除法(/)操作符。你也可以在数字上使用模(%)和指数幂(^)运算符。强制执行标准操作符优先级。</p>
+
+<pre><code class="language-java">// Addition
+int two = parser.parseExpression(&quot;1 + 1&quot;).getValue(Integer.class);  // 2
+
+String testString = parser.parseExpression(
+        &quot;'test' + ' ' + 'string'&quot;).getValue(String.class);  // 'test string'
+
+// Subtraction
+int four = parser.parseExpression(&quot;1 - -3&quot;).getValue(Integer.class);  // 4
+
+double d = parser.parseExpression(&quot;1000.00 - 1e4&quot;).getValue(Double.class);  // -9000
+
+// Multiplication
+int six = parser.parseExpression(&quot;-2 * -3&quot;).getValue(Integer.class);  // 6
+
+double twentyFour = parser.parseExpression(&quot;2.0 * 3e0 * 4&quot;).getValue(Double.class);  // 24.0
+
+// Division
+int minusTwo = parser.parseExpression(&quot;6 / -3&quot;).getValue(Integer.class);  // -2
+
+double one = parser.parseExpression(&quot;8.0 / 4e0 / 2&quot;).getValue(Double.class);  // 1.0
+
+// Modulus
+int three = parser.parseExpression(&quot;7 % 4&quot;).getValue(Integer.class);  // 3
+
+int one = parser.parseExpression(&quot;8 / 5 % 2&quot;).getValue(Integer.class);  // 1
+
+// Operator precedence
+int minusTwentyOne = parser.parseExpression(&quot;1+2-3*8&quot;).getValue(Integer.class);  // -21
+</code></pre>
+
+<h3 id="4-赋值运算符">4、赋值运算符</h3>
+
+<p>使用=符号设置属性。这通常在setValue调用中完成，但也可以在getValue调用中完成。</p>
+
+<pre><code class="language-java">Inventor inventor = new Inventor();
+EvaluationContext context = SimpleEvaluationContext.forReadWriteDataBinding().build();
+
+//在setValue中设置属性
+parser.parseExpression(&quot;name&quot;).setValue(context, inventor, &quot;Aleksandar Seovic&quot;);
+
+//在getValue中设置属性
+String aleks = parser.parseExpression(
+        &quot;name = 'Aleksandar Seovic'&quot;).getValue(context, inventor, String.class);
+</code></pre>
+
+<h2 id="8-types操作-class">8、Types操作（Class）</h2>
+
+<p>通过T操作符获取java.lang.Class实例。T操作符也可以调用静态方法。除了lang包下的所有类，必须使用完全限定类型。</p>
+
+<pre><code class="language-java">//获取java.util.date类型的class实例
+Class dateClass = parser.parseExpression(&quot;T(java.util.Date)&quot;).getValue(Class.class);
+
+//获取java.lang.string类型的class实例，java.lang下的包可以省略限定包名
+Class stringClass = parser.parseExpression(&quot;T(String)&quot;).getValue(Class.class);
+
+//调用静态方法
+boolean trueValue = parser.parseExpression(
+        &quot;T(java.math.RoundingMode).CEILING &lt; T(java.math.RoundingMode).FLOOR&quot;)
+        .getValue(Boolean.class);
+</code></pre>
+
+<h2 id="9-构造方法">9、构造方法</h2>
+
+<p>可以使用new操作符调用构造函数。除了java.lang包中的类型外，应该对所有类型使用完全限定类名。</p>
+
+<pre><code class="language-java">Inventor einstein = p.parseExpression(
+        &quot;new org.spring.samples.spel.inventor.Inventor('Albert Einstein', 'German')&quot;)
+        .getValue(Inventor.class);
+
+// create new Inventor instance within the add() method of List
+p.parseExpression(
+        &quot;Members.add(new org.spring.samples.spel.inventor.Inventor(
+            'Albert Einstein', 'German'))&quot;).getValue(societyContext);
+
+</code></pre>
+
+<h2 id="10-变量">10、变量（#）</h2>
+
+<p>可以使用#variableName语法在表达式中引用变量。变量是通过EvaluationContext实现中的setVariable方法设置的。</p>
+
+<pre><code class="language-java">Inventor tesla = new Inventor(&quot;Nikola Tesla&quot;, &quot;Serbian&quot;);
+
+EvaluationContext context = SimpleEvaluationContext.forReadWriteDataBinding().build();
+context.setVariable(&quot;newName&quot;, &quot;Mike Tesla&quot;);
+
+parser.parseExpression(&quot;name = #newName&quot;).getValue(context, tesla);
+System.out.println(tesla.getName())  // &quot;Mike Tesla&quot;
+</code></pre>
+
+<h3 id="1-this和-root">1、#this和#root</h3>
+
+<p>变量#this总是被定义并引用当前的求值对象(对其进行非限定引用解析)。#root变量总是被定义并引用根上下文对象。尽管#this可能随表达式的组件的求值而变化，但#root总是指根。</p>
+
+<pre><code class="language-java">public static void testThis(){
+    // create an array of integers
+    List&lt;Integer&gt; primes = new ArrayList&lt;Integer&gt;();
+    primes.addAll(Arrays.asList(2,3,5,7,11,13,17));
+    // create parser and set variable 'primes' as the array of integers
+    ExpressionParser parser = new SpelExpressionParser();
+    EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+    context.setVariable(&quot;primes&quot;, primes);
+    //#this指带当前#引用的对象
+    // evaluates to [11, 13, 17]
+    List&lt;Integer&gt; primesGreaterThanTenRoot = (List&lt;Integer&gt;) parser.parseExpression(
+            &quot;#primes.?[#this&gt;#root]&quot;).getValue(context,new Integer(10));
+    // #root指带当前的根对象
+    // evaluates to [11, 13, 17]
+    List&lt;Integer&gt; primesGreaterThanTenThis = (List&lt;Integer&gt;) parser.parseExpression(
+            &quot;#primes.?[#this&gt;10]&quot;).getValue(context);
+    for (Integer integer : primesGreaterThanTenRoot) {
+        System.out.println(integer);
+    }
+    System.out.println(&quot;==================================================&quot;);
+    for (Integer integer : primesGreaterThanTenThis) {
+        System.out.println(integer);
+    }
+}
+</code></pre>
+
+<h2 id="11-函数">11、函数</h2>
+
+<p>可以通过注册可在表达式字符串中调用的用户定义函数来扩展SpEL。函数是通过EvaluationContext注册的。</p>
+
+<pre><code class="language-java">public abstract class StringUtils {
+    
+//待注册的方法
+    public static String reverseString(String input) {
+        StringBuilder backwards = new StringBuilder(input.length());
+        for (int i = 0; i &lt; input.length(); i++) {
+            backwards.append(input.charAt(input.length() - 1 - i));
+        }
+        return backwards.toString();
+    }
+}
+
+ExpressionParser parser = new SpelExpressionParser();
+
+EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+
+//通过给容器中设置变量来注册方法
+context.setVariable(&quot;reverseString&quot;,
+        StringUtils.class.getDeclaredMethod(&quot;reverseString&quot;, String.class));
+
+//调用方法
+String helloWorldReversed = parser.parseExpression(
+        &quot;#reverseString('hello')&quot;).getValue(context, String.class);
+
+</code></pre>
+
+<h2 id="12-bean的引用">12、bean的引用（@）</h2>
+
+<p>如果计算上下文配置了bean解析器，则可以使用@符号从表达式中查找bean。</p>
+
+<pre><code class="language-java">ExpressionParser parser = new SpelExpressionParser();
+StandardEvaluationContext context = new StandardEvaluationContext();
+context.setBeanResolver(new MyBeanResolver());
+
+// This will end up calling resolve(context,&quot;&amp;foo&quot;) on MyBeanResolver during evaluation
+Object bean = parser.parseExpression(&quot;&amp;foo&quot;).getValue(context);
+
+</code></pre>
+
+<h2 id="13-三元操作符-if-then-else">13、三元操作符(if - then - else)</h2>
+
+<pre><code class="language-java">String falseString = parser.parseExpression(
+        &quot;false ? 'trueExp' : 'falseExp'&quot;).getValue(String.class);
+
+</code></pre>
+
+<pre><code class="language-java">parser.parseExpression(&quot;name&quot;).setValue(societyContext, &quot;IEEE&quot;);
+societyContext.setVariable(&quot;queryName&quot;, &quot;Nikola Tesla&quot;);
+
+expression = &quot;isMember(#queryName)? #queryName + ' is a member of the ' &quot; +
+        &quot;+ Name + ' Society' : #queryName + ' is not a member of the ' + Name + ' Society'&quot;;
+
+String queryResultString = parser.parseExpression(expression)
+        .getValue(societyContext, String.class);
+// queryResultString = &quot;Nikola Tesla is a member of the IEEE Society&quot;
+
+</code></pre>
+
+<h2 id="14-elvis运算符">14、Elvis运算符</h2>
+
+<p>Elvis操作符是三元操作符语法的缩写，在Groovy语言中使用</p>
+
+<p>1、三元运算符的使用</p>
+
+<pre><code class="language-java">String name = &quot;Elvis Presley&quot;;
+String displayName = (name != null ? name : &quot;Unknown&quot;);
+</code></pre>
+
+<p>2、Elvis运算符</p>
+
+<pre><code class="language-java">ExpressionParser parser = new SpelExpressionParser();
+
+String name = parser.parseExpression(&quot;name?:'Unknown'&quot;).getValue(new Inventor(), String.class);
+System.out.println(name);  // 'Unknown'
+</code></pre>
+
+<h2 id="15-安全的导航操作符-防止空指针异常">15、安全的导航操作符（防止空指针异常）</h2>
+
+<p>安全导航操作符用于避免NullPointerException，它来自Groovy语言。通常，当您有一个对象的引用时，您可能需要在访问该对象的方法或属性之前验证它不是空的。为了避免这种情况，安全导航操作符返回null，而不是抛出异常。</p>
+
+<pre><code class="language-java">ExpressionParser parser = new SpelExpressionParser();
+EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+
+Inventor tesla = new Inventor(&quot;Nikola Tesla&quot;, &quot;Serbian&quot;);
+tesla.setPlaceOfBirth(new PlaceOfBirth(&quot;Smiljan&quot;));
+
+String city = parser.parseExpression(&quot;placeOfBirth?.city&quot;).getValue(context, tesla, String.class);
+System.out.println(city);  // Smiljan
+
+tesla.setPlaceOfBirth(null);
+city = parser.parseExpression(&quot;placeOfBirth?.city&quot;).getValue(context, tesla, String.class);
+System.out.println(city);  // null - does not throw NullPointerException!!!
+
+</code></pre>
+
+<p>通过使用？来防止产生空指针异常。</p>
+
+<h2 id="16-集合选择-子集">16、集合选择（子集）</h2>
+
+<p>Selection是一个功能强大的表达式语言特性，它允许您通过从一个源集合的条目中进行选择，将其转换为另一个集合。</p>
+
+<p>集合选择使用 .?[selectionExpression] 的语法。它过滤集合并返回一个包含原始元素子集的新集合。</p>
+
+<pre><code class="language-java">List&lt;Inventor&gt; list = (List&lt;Inventor&gt;) parser.parseExpression(
+        &quot;members.?[nationality == 'Serbian']&quot;).getValue(societyContext);
+</code></pre>
+
+<p>数组和任何实现java.lang.Iterable或java.util.Map的东西都支持选择。对于列表或数组，将根据每个单独的元素计算选择条件。对于映射，根据每个映射条目(Java类型的对象map . entry)评估选择标准。每个映射条目都有其键和值，可以作为属性在选择中使用。</p>
+
+<pre><code class="language-java">Map newMap = parser.parseExpression(&quot;map.?[value&lt;27]&quot;).getValue();
+</code></pre>
+
+<p>除了返回所有选中的元素外，您还可以只检索第一个或最后一个元素。要获得匹配选择的第一个元素，语法是。<sup class="footnote-ref" id="fnref:selectionExpress"><a href="#fn:selectionExpress">1</a></sup>。要获得最后一个匹配的选择，语法是。$[selectionExpression]。</p>
+
+<h2 id="17-集合投影-新的集合">17、集合投影（新的集合）</h2>
+
+<p>投影让集合驱动子表达式的求值，结果是一个新集合。投影的语法是。</p>
+
+<p>![projectionExpression]。</p>
+
+<pre><code class="language-java">// returns ['Smiljan', 'Idvor' ]
+List placesOfBirth = (List)parser.parseExpression(&quot;members.![placeOfBirth.city]&quot;);
+</code></pre>
+
+<p>数组和任何实现java.lang.Iterable或java.util.Map的东西都支持投影。当使用map来驱动投影时，映射表达式将针对map中的每个条目(表示为Java map . entry)求值。跨映射的投影结果是一个列表，其中包含针对每个映射条目的投影表达式的求值。</p>
+
+<h2 id="18-表达式模板">18、表达式模板</h2>
+
+<p>表达式模板允许混合文本和一个或多个计算块。每个计算块都由您可以定义的前缀和后缀字符分隔。一个常见的选择是使用#{}作为分隔符</p>
+
+<pre><code class="language-java">String randomPhrase = parser.parseExpression(
+        &quot;random number is #{T(java.lang.Math).random()}&quot;,
+        new TemplateParserContext()).getValue(String.class);
+
+// evaluates to &quot;random number is 0.7038186818312008&quot;
+
+</code></pre>
+
+<p>*译文：*字符串的计算方法是将文本“random number is”与在#{}分隔符内计算表达式的结果(在本例中，是调用random()方法的结果)连接起来。parseExpression()方法的第二个参数是ParserContext类型。ParserContext接口用于影响如何解析表达式，以支持表达式模板功能。TemplateParserContext的定义如下</p>
+
+<pre><code class="language-java">public class TemplateParserContext implements ParserContext {
+
+    public String getExpressionPrefix() {
+        return &quot;#{&quot;;
+    }
+
+    public String getExpressionSuffix() {
+        return &quot;}&quot;;
+    }
+
+    public boolean isTemplate() {
+        return true;
+    }
+}
+
+</code></pre>
+
+<h2 id="以上列子使用到的类">$以上列子使用到的类</h2>
+
+<pre><code class="language-java">package org.spring.samples.spel.inventor;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+public class Inventor {
+
+    private String name;
+    private String nationality;
+    private String[] inventions;
+    private Date birthdate;
+    private PlaceOfBirth placeOfBirth;
+
+    public Inventor(String name, String nationality) {
+        GregorianCalendar c= new GregorianCalendar();
+        this.name = name;
+        this.nationality = nationality;
+        this.birthdate = c.getTime();
+    }
+
+    public Inventor(String name, Date birthdate, String nationality) {
+        this.name = name;
+        this.nationality = nationality;
+        this.birthdate = birthdate;
+    }
+
+    public Inventor() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public PlaceOfBirth getPlaceOfBirth() {
+        return placeOfBirth;
+    }
+
+    public void setPlaceOfBirth(PlaceOfBirth placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
+    public void setInventions(String[] inventions) {
+        this.inventions = inventions;
+    }
+
+    public String[] getInventions() {
+        return inventions;
+    }
+}
+
+</code></pre>
+
+<pre><code class="language-java">package org.spring.samples.spel.inventor;
+
+public class PlaceOfBirth {
+
+    private String city;
+    private String country;
+
+    public PlaceOfBirth(String city) {
+        this.city=city;
+    }
+
+    public PlaceOfBirth(String city, String country) {
+        this(city);
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String s) {
+        this.city = s;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+}
+
+</code></pre>
+
+<pre><code class="language-java">package org.spring.samples.spel.inventor;
+
+import java.util.*;
+
+public class Society {
+
+    private String name;
+
+    public static String Advisors = &quot;advisors&quot;;
+    public static String President = &quot;president&quot;;
+
+    private List&lt;Inventor&gt; members = new ArrayList&lt;Inventor&gt;();
+    private Map officers = new HashMap();
+
+    public List getMembers() {
+        return members;
+    }
+
+    public Map getOfficers() {
+        return officers;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isMember(String name) {
+        for (Inventor inventor : members) {
+            if (inventor.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+</code></pre>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:selectionExpress">selectionExpression <a class="footnote-return" href="#fnref:selectionExpress"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
